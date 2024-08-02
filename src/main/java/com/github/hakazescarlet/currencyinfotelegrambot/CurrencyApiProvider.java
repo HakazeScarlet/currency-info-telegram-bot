@@ -4,17 +4,22 @@ import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 @Component
 public class CurrencyApiProvider {
 
-    private static final String API_KEY = "cur_live_3afXwqlcpeTMdLcN857JUUSWSfqJjJSxeGl1hKPZ";
+    private static final String API_KEY = System.getenv("CURRENCY_LAYER_API_KEY");
 
-    public void test() {
+    private final HttpClient httpClient = HttpClient.newHttpClient();
+
+    public void calculate() {
         URI uri = null;
         try {
-            uri = new URI("https://api.currencyapi.com/v3/latest?apikey=" + API_KEY);
+            uri = new URI("http://api.currencylayer.com/convert?access_key="
+                    + API_KEY + "&from=USD&to=RUB&amount=400");
         } catch (URISyntaxException e) {
             throw new IncorrectURIException("", e);
         }
@@ -22,6 +27,12 @@ public class CurrencyApiProvider {
                 .uri(uri)
                 .GET()
                 .build();
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.body());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
