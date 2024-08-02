@@ -9,5 +9,4 @@ public class CurrencyInfoTelegramBotApplication {
     public static void main(String[] args) {
         SpringApplication.run(CurrencyInfoTelegramBotApplication.class, args);
     }
-
 }
