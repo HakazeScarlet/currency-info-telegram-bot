@@ -2,6 +2,7 @@ package com.github.hakazescarlet.currencyinfotelegrambot;
 
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -15,13 +16,16 @@ public class CurrencyApiProvider {
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
-    public void calculate() {
+    public void calculate(String from, String to, double amount) {
         URI uri = null;
         try {
             uri = new URI("http://api.currencylayer.com/convert?access_key="
-                    + API_KEY + "&from=USD&to=RUB&amount=400");
+                    + API_KEY
+                    + "&from=" + from
+                    + "&to=" + to
+                    + "&amount=" + amount);
         } catch (URISyntaxException e) {
-            throw new IncorrectURIException("", e);
+            throw new IncorrectURIException("Please, check the correctness of the URI", e);
         }
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
@@ -30,15 +34,27 @@ public class CurrencyApiProvider {
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println(response.body());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new IncorrectUserInputException("Please, check the correctness of the input data", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
+
+
 }
 
 final class IncorrectURIException extends RuntimeException {
 
+
     public IncorrectURIException(String message, Exception e) {
+        super(message, e);
+    }
+}
+
+final class IncorrectUserInputException extends RuntimeException {
+
+    public IncorrectUserInputException(String message, Exception e) {
         super(message, e);
     }
 }

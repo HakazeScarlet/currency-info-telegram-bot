@@ -16,6 +16,6 @@ public class CurrencyController {
 
     @GetMapping("/calc")
     public void test() {
-        currencyApiProvider.calculate();
+        currencyApiProvider.calculate("RUB", "USD", 400);
     }
 }
