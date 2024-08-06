@@ -9,8 +9,8 @@ public class ExchangeRatesResponse {
     @JsonProperty("result")
     private double finalCurrency;
 
-    @JsonProperty("quote")
-    private double currencyQuote;
+    @JsonProperty("info")
+    private Info info;
 
     public double getFinalCurrency() {
         return finalCurrency;
@@ -20,11 +20,26 @@ public class ExchangeRatesResponse {
         this.finalCurrency = finalCurrency;
     }
 
-    public double getCurrencyQuote() {
-        return currencyQuote;
+    public Info getCurrencyQuote() {
+        return info;
     }
 
-    public void setCurrencyQuote(double currencyQuote) {
-        this.currencyQuote = currencyQuote;
+    public void setCurrencyQuote(Info info) {
+        this.info = info;
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    static class Info {
+
+        @JsonProperty("quote")
+        private double currencyQuote;
+
+        public double getCurrencyQuote() {
+            return currencyQuote;
+        }
+
+        public void setCurrencyQuote(double currencyQuote) {
+            this.currencyQuote = currencyQuote;
+        }
     }
 }

@@ -8,14 +8,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping
 public class CurrencyController {
 
-    private final CurrencyApiProvider currencyApiProvider;
+    private final CurrencyConverterApiProvider currencyConverterApiProvider;
 
-    public CurrencyController(CurrencyApiProvider currencyApiProvider) {
-        this.currencyApiProvider = currencyApiProvider;
+    public CurrencyController(CurrencyConverterApiProvider currencyConverterApiProvider) {
+        this.currencyConverterApiProvider = currencyConverterApiProvider;
     }
+
+//    private final CurrencyApiProvider currencyApiProvider;
+//
+//    public CurrencyController(CurrencyApiProvider currencyApiProvider) {
+//        this.currencyApiProvider = currencyApiProvider;
+//    }
+
+//    @GetMapping("/calc")
+//    public void test() {
+//        currencyApiProvider.convert("RUB", "USD", 400);
+//    }
 
     @GetMapping("/calc")
     public void test() {
-        currencyApiProvider.calculate("RUB", "USD", 400);
+        currencyConverterApiProvider.calculate("USD");
     }
 }

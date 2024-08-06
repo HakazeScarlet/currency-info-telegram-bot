@@ -11,19 +11,18 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 @Component
-public class CurrencyApiProvider {
+public class CurrencyConverterApiProvider {
 
-    private static final String API_KEY = System.getenv("CURRENCY_LAYER_API_KEY");
+    private static final String CALCULATE_CURRENCIES_API_KEY = System.getenv("CALCULATE_CURRENCIES_API_KEY");
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public void convert(String from, String to, double amount) {
-        URI uri = URI.create("http://api.currencylayer.com/convert?access_key="
-            + API_KEY
-            + "&from=" + from
-            + "&to=" + to
-            + "&amount=" + amount);
+    public void calculate(String fromCurrency) {
+        URI uri = URI.create("https://v6.exchangerate-api.com/v6/" +
+            CALCULATE_CURRENCIES_API_KEY +
+            "/latest/" +
+            fromCurrency);
 
         HttpRequest request = HttpRequest.newBuilder()
             .uri(uri)
@@ -33,11 +32,7 @@ public class CurrencyApiProvider {
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String body = response.body();
-            ExchangeRatesResponse exchangeRatesResponse = objectMapper.readValue(body, ExchangeRatesResponse.class);
-            System.out.println("Currency Quote: " +
-                exchangeRatesResponse.getCurrencyQuote() +
-                "\nFinal Currency: " +
-                exchangeRatesResponse.getFinalCurrency());
+            System.out.println(body);
         } catch (IOException e) {
             throw new IncorrectUserInputException("Please, check the correctness of the input data", e);
         } catch (InterruptedException e) {
