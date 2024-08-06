@@ -1,5 +1,6 @@
 package com.github.hakazescarlet.currencyinfotelegrambot;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ public class CurrencyApiProvider {
 
     private static final String API_KEY = System.getenv("CURRENCY_LAYER_API_KEY");
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
     public void calculate(String from, String to, double amount) {
@@ -28,7 +30,12 @@ public class CurrencyApiProvider {
             .build();
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
+            String body = response.body();
+            ExchangeRatesResponse exchangeRatesResponse = objectMapper.readValue(body, ExchangeRatesResponse.class);
+            System.out.println("Currency Quote: " +
+                exchangeRatesResponse.getCurrencyQuote() +
+                "\nFinal Currency: " +
+                exchangeRatesResponse.getFinalCurrency());
         } catch (IOException e) {
             throw new IncorrectUserInputException("Please, check the correctness of the input data", e);
         } catch (InterruptedException e) {
