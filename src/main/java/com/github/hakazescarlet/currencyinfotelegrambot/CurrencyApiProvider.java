@@ -33,7 +33,7 @@ public class CurrencyApiProvider {
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String body = response.body();
-            ExchangeRatesResponse exchangeRatesResponse = objectMapper.readValue(body, ExchangeRatesResponse.class);
+            ExchangeRatesInfo exchangeRatesResponse = objectMapper.readValue(body, ExchangeRatesInfo.class);
             System.out.println("Currency Quote: " +
                 exchangeRatesResponse.getCurrencyQuote() +
                 "\nFinal Currency: " +

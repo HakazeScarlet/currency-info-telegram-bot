@@ -2,7 +2,6 @@ package com.github.hakazescarlet.currencyinfotelegrambot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.hakazescarlet.currencyinfotelegrambot.exception.IncorrectUserInputException;
-import org.apache.catalina.mapper.Mapper;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -35,8 +34,9 @@ public class CurrencyConverterApiProvider {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String body = response.body();
 
-            Map currencyMap = new ObjectMapper().readValue(body, Map.class);
-            System.out.println(currencyMap.get(fromCurrency));
+            ConventionRatesHolder conventionRatesHolder = objectMapper.readValue(body, ConventionRatesHolder.class);
+            Map<String, Double> conversionRates = conventionRatesHolder.getConversionRatesHolder();
+            System.out.println(conversionRates.get("RUB"));
         } catch (IOException e) {
             throw new IncorrectUserInputException("Please, check the correctness of the input data", e);
         } catch (InterruptedException e) {
