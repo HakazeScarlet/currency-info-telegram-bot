@@ -7,18 +7,18 @@ import java.util.Map;
 @Component
 public class CurrencyConverter {
 
-    private Map<String, Double> fromCurrency;
-    private double value;
-    private double toCurrency;
+    private Double result;
 
-    private final ConventionRatesHolder conventionRatesHolder;
+    private final CurrencyConverterApiProvider currencyConverterApiProvider;
 
-    public CurrencyConverter(ConventionRatesHolder conventionRatesHolder) {
-        this.conventionRatesHolder = conventionRatesHolder;
+    public CurrencyConverter(CurrencyConverterApiProvider currencyConverterApiProvider) {
+        this.currencyConverterApiProvider = currencyConverterApiProvider;
     }
 
-    public void convert() {
-        fromCurrency = conventionRatesHolder.getConversionRatesHolder();
-
+    public void convert(String currency, String target, double amount) {
+        ConventionRatesHolder holder = currencyConverterApiProvider.getExchangeRate(currency);
+        Map<String, Double> conversionRates = holder.getConversionRates();
+        conversionRates.get(target);
+        System.out.println(result = conversionRates.get(target) * amount);
     }
 }

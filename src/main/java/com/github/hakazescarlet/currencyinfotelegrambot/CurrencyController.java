@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping
 public class CurrencyController {
 
-    private final CurrencyConverterApiProvider currencyConverterApiProvider;
-
-    public CurrencyController(CurrencyConverterApiProvider currencyConverterApiProvider) {
-        this.currencyConverterApiProvider = currencyConverterApiProvider;
-    }
+//    private final CurrencyConverterApiProvider currencyConverterApiProvider;
+//
+//    public CurrencyController(CurrencyConverterApiProvider currencyConverterApiProvider) {
+//        this.currencyConverterApiProvider = currencyConverterApiProvider;
+//    }
 
 //    private final CurrencyApiProvider currencyApiProvider;
 //
@@ -25,8 +25,19 @@ public class CurrencyController {
 //        currencyApiProvider.convert("RUB", "USD", 400);
 //    }
 
+    private final CurrencyConverter currencyConverter;
+
+    public CurrencyController(CurrencyConverter currencyConverter) {
+        this.currencyConverter = currencyConverter;
+    }
+
     @GetMapping("/calc")
     public void test() {
-        currencyConverterApiProvider.calculate("USD");
+        currencyConverter.convert("UAH", "EUR", 1000);
     }
+
+//    @GetMapping("/calc")
+//    public void test() {
+//        currencyConverterApiProvider.getExchangeRate("USD");
+//    }
 }

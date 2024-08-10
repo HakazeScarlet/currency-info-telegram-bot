@@ -10,13 +10,13 @@ import java.util.Map;
 public class ConventionRatesHolder {
 
     @JsonProperty("conversion_rates")
-    private Map<String, Double> conversionRatesHolder = new LinkedHashMap<>();
+    private Map<String, Double> conversionRates = new LinkedHashMap<>();
 
-    public Map<String, Double> getConversionRatesHolder() {
-        return conversionRatesHolder;
+    public Map<String, Double> getConversionRates() {
+        return conversionRates;
     }
 
-    public void setConversionRatesHolder(Map<String, Double> conversionRatesHolder) {
-        this.conversionRatesHolder = conversionRatesHolder;
+    public void setConversionRates(Map<String, Double> conversionRates) {
+        this.conversionRates = conversionRates;
     }
 }

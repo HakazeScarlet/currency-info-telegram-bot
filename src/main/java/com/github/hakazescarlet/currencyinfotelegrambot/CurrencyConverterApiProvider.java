@@ -19,7 +19,7 @@ public class CurrencyConverterApiProvider {
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public void calculate(String fromCurrency) {
+    public ConventionRatesHolder getExchangeRate(String fromCurrency) {
         URI uri = URI.create("https://v6.exchangerate-api.com/v6/" +
             CALCULATE_CURRENCIES_API_KEY +
             "/latest/" +
@@ -30,17 +30,19 @@ public class CurrencyConverterApiProvider {
             .GET()
             .build();
 
+        ConventionRatesHolder conventionRatesHolder = null;
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String body = response.body();
 
-            ConventionRatesHolder conventionRatesHolder = objectMapper.readValue(body, ConventionRatesHolder.class);
-            Map<String, Double> conversionRates = conventionRatesHolder.getConversionRatesHolder();
-            System.out.println(conversionRates.get("RUB"));
+            conventionRatesHolder = objectMapper.readValue(body, ConventionRatesHolder.class);
+//            Map<String, Double> conversionRates = conventionRatesHolder.getConversionRates();
+//            System.out.println(conversionRates.get("RUB"));
         } catch (IOException e) {
             throw new IncorrectUserInputException("Please, check the correctness of the input data", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+        return conventionRatesHolder;
     }
 }
