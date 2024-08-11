@@ -1,4 +1,4 @@
-package com.github.hakazescarlet.currencyinfotelegrambot;
+package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ConventionRatesHolder {
+public class ConversionRatesHolder {
 
     @JsonProperty("conversion_rates")
     private Map<String, Double> conversionRates = new LinkedHashMap<>();

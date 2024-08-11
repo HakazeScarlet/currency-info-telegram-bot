@@ -1,4 +1,4 @@
-package com.github.hakazescarlet.currencyinfotelegrambot;
+package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,17 +7,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ExchangeRatesInfo {
 
     @JsonProperty("result")
-    private double finalCurrency;
+    private double currency;
 
     @JsonProperty("info")
     private Info info;
 
-    public double getFinalCurrency() {
-        return finalCurrency;
+    public double getCurrency() {
+        return currency;
     }
 
-    public void setFinalCurrency(double finalCurrency) {
-        this.finalCurrency = finalCurrency;
+    public void setCurrency(double currency) {
+        this.currency = currency;
     }
 
     public Info getCurrencyQuote() {
@@ -32,14 +32,14 @@ public class ExchangeRatesInfo {
     static class Info {
 
         @JsonProperty("quote")
-        private double currencyQuote;
+        private double quote;
 
-        public double getCurrencyQuote() {
-            return currencyQuote;
+        public double getQuote() {
+            return quote;
         }
 
-        public void setCurrencyQuote(double currencyQuote) {
-            this.currencyQuote = currencyQuote;
+        public void setQuote(double quote) {
+            this.quote = quote;
         }
     }
 }
