@@ -1,4 +1,4 @@
-package com.github.hakazescarlet.currencyinfotelegrambot;
+package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.hakazescarlet.currencyinfotelegrambot.exception.IncorrectUserInputException;
@@ -9,40 +9,41 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Map;
 
 @Component
-public class CurrencyConverterApiProvider {
+public class ConversionRatesApiProvider {
 
-    private static final String CALCULATE_CURRENCIES_API_KEY = System.getenv("CALCULATE_CURRENCIES_API_KEY");
+    private static final String EXCHANGE_RATE_API_KEY = System.getenv("EXCHANGE_RATE_API_KEY");
 
-    private final HttpClient httpClient = HttpClient.newHttpClient();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final HttpClient httpClient;
+    private final ObjectMapper objectMapper;
 
-    public ConventionRatesHolder getExchangeRate(String fromCurrency) {
+    public ConversionRatesApiProvider(HttpClient httpClient, ObjectMapper objectMapper) {
+        this.httpClient = httpClient;
+        this.objectMapper = objectMapper;
+    }
+
+    public ConversionRatesHolder getExchangeRate(String currency) {
         URI uri = URI.create("https://v6.exchangerate-api.com/v6/" +
-            CALCULATE_CURRENCIES_API_KEY +
+            EXCHANGE_RATE_API_KEY +
             "/latest/" +
-            fromCurrency);
+            currency);
 
         HttpRequest request = HttpRequest.newBuilder()
             .uri(uri)
             .GET()
             .build();
 
-        ConventionRatesHolder conventionRatesHolder = null;
+        ConversionRatesHolder conversionRatesHolder = null;
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            String body = response.body();
-
-            conventionRatesHolder = objectMapper.readValue(body, ConventionRatesHolder.class);
-//            Map<String, Double> conversionRates = conventionRatesHolder.getConversionRates();
-//            System.out.println(conversionRates.get("RUB"));
+            conversionRatesHolder = objectMapper.readValue(response.body(), ConversionRatesHolder.class);
         } catch (IOException e) {
+            // TODO: create more generalized exception
             throw new IncorrectUserInputException("Please, check the correctness of the input data", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        return conventionRatesHolder;
+        return conversionRatesHolder;
     }
 }

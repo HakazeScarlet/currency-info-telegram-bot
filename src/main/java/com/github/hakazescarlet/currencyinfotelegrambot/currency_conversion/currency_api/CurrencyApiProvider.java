@@ -1,4 +1,4 @@
-package com.github.hakazescarlet.currencyinfotelegrambot;
+package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.hakazescarlet.currencyinfotelegrambot.exception.IncorrectUserInputException;
@@ -13,14 +13,19 @@ import java.net.http.HttpResponse;
 @Component
 public class CurrencyApiProvider {
 
-    private static final String API_KEY = System.getenv("CURRENCY_LAYER_API_KEY");
+    private static final String CURRENCY_LAYER_API_KEY = System.getenv("CURRENCY_LAYER_API_KEY");
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final ObjectMapper objectMapper;
+    private final HttpClient httpClient;
+
+    public CurrencyApiProvider(ObjectMapper objectMapper, HttpClient httpClient) {
+        this.objectMapper = objectMapper;
+        this.httpClient = httpClient;
+    }
 
     public void convert(String from, String to, double amount) {
         URI uri = URI.create("http://api.currencylayer.com/convert?access_key="
-            + API_KEY
+            + CURRENCY_LAYER_API_KEY
             + "&from=" + from
             + "&to=" + to
             + "&amount=" + amount);
@@ -32,12 +37,8 @@ public class CurrencyApiProvider {
 
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            String body = response.body();
-            ExchangeRatesInfo exchangeRatesResponse = objectMapper.readValue(body, ExchangeRatesInfo.class);
-            System.out.println("Currency Quote: " +
-                exchangeRatesResponse.getCurrencyQuote() +
-                "\nFinal Currency: " +
-                exchangeRatesResponse.getFinalCurrency());
+            ExchangeRatesInfo exchangeRatesResponse = objectMapper.readValue(response.body(), ExchangeRatesInfo.class);
+            // TODO: return result
         } catch (IOException e) {
             throw new IncorrectUserInputException("Please, check the correctness of the input data", e);
         } catch (InterruptedException e) {
