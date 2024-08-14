@@ -19,7 +19,6 @@ public class CurrencyConverter {
     public BigDecimal convert(String current, String target, BigDecimal amount) {
         // TODO: handle case when one of three parameters will be null (do it after telegram logic writing)
         ConversionRatesHolder holder = currencyConverterApiProvider.getExchangeRate(current);
-        //test comment
         Map<String, Double> conversionRates = holder.getConversionRates();
         return BigDecimal.valueOf(conversionRates.get(target)).multiply(amount);
     }
