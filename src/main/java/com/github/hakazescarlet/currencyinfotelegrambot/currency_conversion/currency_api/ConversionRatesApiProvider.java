@@ -1,7 +1,7 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.hakazescarlet.currencyinfotelegrambot.exception.IncorrectUserInputException;
+import com.github.hakazescarlet.currencyinfotelegrambot.exception.IncorrectInputException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class ConversionRatesApiProvider {
             conversionRatesHolder = objectMapper.readValue(response.body(), ConversionRatesHolder.class);
         } catch (IOException e) {
             // TODO: create more generalized exception
-            throw new IncorrectUserInputException("Please, check the correctness of the input data", e);
+            throw new IncorrectInputException("Please, check the correctness of the input data", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
