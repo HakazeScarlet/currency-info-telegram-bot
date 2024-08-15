@@ -10,17 +10,17 @@ import java.util.Map;
 public class BeaconExchangeRates {
 
     @JsonProperty("base")
-    private String base;
+    private String baseCurrency;
 
     @JsonProperty("rates")
     private Map<String, BigDecimal> rates;
 
-    public String getBase() {
-        return base;
+    public String getBaseCurrency() {
+        return baseCurrency;
     }
 
-    public void setBase(String base) {
-        this.base = base;
+    public void setBaseCurrency(String baseCurrency) {
+        this.baseCurrency = baseCurrency;
     }
 
     public Map<String, BigDecimal> getRates() {

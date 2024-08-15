@@ -7,13 +7,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class BeaconConvertMapper {
 
     @JsonProperty("value")
-    private Double value;
+    private Double conversionRate;
 
-    public Double getValue() {
-        return value;
+    public Double getConversionRate() {
+        return conversionRate;
     }
 
-    public void setValue(Double value) {
-        this.value = value;
+    public void setConversionRate(Double conversionRate) {
+        this.conversionRate = conversionRate;
     }
 }

@@ -26,6 +26,6 @@ public class CurrencyController {
 //        currencyConverter.convert("JPY", "EUR", 3654.0);
 //        currencyBeaconApiProvider.convert("GBP", "USD", BigDecimal.valueOf(12345.0));
 //        currencyBeaconApiProvider.getCurrencyBeaconExchangeRates("USD");
-        currencyConverter.convert("USD", "RUB", BigDecimal.valueOf(1000.0));
+        System.out.println(currencyConverter.convert("GBP", "ZAR", BigDecimal.valueOf(1000.0)));
     }
 }

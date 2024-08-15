@@ -1,7 +1,7 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.hakazescarlet.currencyinfotelegrambot.exception.IncorrectInputException;
+import com.github.hakazescarlet.currencyinfotelegrambot.exception.IncorrectQueryException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class CurrencyBeaconApiProvider {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             beaconConvertMapper = objectMapper.readValue(response.body(), BeaconConvertMapper.class);
         } catch (IOException e) {
-            throw new IncorrectInputException("Please, check the correctness of the input data", e);
+            throw new IncorrectQueryException("Invalid request form or unable to extract data from response", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -63,7 +63,7 @@ public class CurrencyBeaconApiProvider {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             beaconExchangeRates = objectMapper.readValue(response.body(), BeaconExchangeRates.class);
         } catch (IOException e) {
-            throw new IncorrectInputException("Please, check the correctness of the input data", e);
+            throw new IncorrectQueryException("Invalid request form or unable to extract data from response", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
