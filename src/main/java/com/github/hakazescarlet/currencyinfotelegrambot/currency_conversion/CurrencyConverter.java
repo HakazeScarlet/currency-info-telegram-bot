@@ -6,6 +6,7 @@ import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.curr
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 
 @Service
@@ -27,6 +28,6 @@ public class CurrencyConverter {
 
         BeaconExchangeRates beaconExchangeRates = currencyBeaconApiProvider.getCurrencyBeaconExchangeRates(current);
         Map<String, BigDecimal> conversionRates = beaconExchangeRates.getRates();
-        return conversionRates.get(target).multiply(amount);
+        return conversionRates.get(target).multiply(amount).setScale(2, RoundingMode.HALF_UP);
     }
 }
