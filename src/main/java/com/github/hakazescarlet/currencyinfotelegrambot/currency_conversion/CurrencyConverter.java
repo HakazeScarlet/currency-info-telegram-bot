@@ -1,6 +1,6 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion;
 
-import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api.BeaconExchangeRates;
+import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api.BeaconExchangeRatesHolder;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api.ConversionRatesApiProvider;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api.CurrencyBeaconApiProvider;
 import org.springframework.stereotype.Service;
@@ -26,8 +26,8 @@ public class CurrencyConverter {
 //        Map<String, Double> conversionRates = holder.getConversionRates();
 //        return BigDecimal.valueOf(conversionRates.get(target)).multiply(amount);
 
-        BeaconExchangeRates beaconExchangeRates = currencyBeaconApiProvider.getCurrencyBeaconExchangeRates(current);
-        Map<String, BigDecimal> conversionRates = beaconExchangeRates.getRates();
-        return conversionRates.get(target).multiply(amount).setScale(2, RoundingMode.HALF_UP);
+        BeaconExchangeRatesHolder beaconExchangeRatesHolder = currencyBeaconApiProvider.getCurrencyBeaconExchangeRates(current);
+        Map<String, Double> conversionRates = beaconExchangeRatesHolder.getRates();
+        return BigDecimal.valueOf(conversionRates.get(target)).multiply(amount).setScale(2, RoundingMode.HALF_UP);
     }
 }

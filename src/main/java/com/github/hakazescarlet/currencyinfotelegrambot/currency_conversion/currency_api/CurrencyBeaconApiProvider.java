@@ -1,7 +1,7 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.hakazescarlet.currencyinfotelegrambot.exception.IncorrectQueryException;
+import com.github.hakazescarlet.currencyinfotelegrambot.exception.IOResourceException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -41,14 +41,14 @@ public class CurrencyBeaconApiProvider {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             beaconConvertMapper = objectMapper.readValue(response.body(), BeaconConvertMapper.class);
         } catch (IOException e) {
-            throw new IncorrectQueryException("Invalid request form or unable to extract data from response", e);
+            throw new IOResourceException("Invalid request form or unable to extract data from response", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
         return beaconConvertMapper;
     }
 
-    public BeaconExchangeRates getCurrencyBeaconExchangeRates(String baseCurrency) {
+    public BeaconExchangeRatesHolder getCurrencyBeaconExchangeRates(String baseCurrency) {
         URI uri = URI.create("https://api.currencybeacon.com/v1/latest?api_key="
             + CURRENCY_BEACON_API_KEY
             + "&base=" + baseCurrency);
@@ -58,15 +58,15 @@ public class CurrencyBeaconApiProvider {
             .GET()
             .build();
 
-        BeaconExchangeRates beaconExchangeRates = new BeaconExchangeRates();
+        BeaconExchangeRatesHolder beaconExchangeRatesHolder = new BeaconExchangeRatesHolder();
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            beaconExchangeRates = objectMapper.readValue(response.body(), BeaconExchangeRates.class);
+            beaconExchangeRatesHolder = objectMapper.readValue(response.body(), BeaconExchangeRatesHolder.class);
         } catch (IOException e) {
-            throw new IncorrectQueryException("Invalid request form or unable to extract data from response", e);
+            throw new IOResourceException("Invalid request form or unable to extract data from response", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        return beaconExchangeRates;
+        return beaconExchangeRatesHolder;
     }
 }

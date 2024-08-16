@@ -1,7 +1,7 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.hakazescarlet.currencyinfotelegrambot.exception.IncorrectQueryException;
+import com.github.hakazescarlet.currencyinfotelegrambot.exception.IOResourceException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class ConversionRatesApiProvider {
             conversionRatesHolder = objectMapper.readValue(response.body(), ConversionRatesHolder.class);
         } catch (IOException e) {
             // TODO: create more generalized exception
-            throw new IncorrectQueryException("Invalid request form or unable to extract data from response", e);
+            throw new IOResourceException("Invalid request form or unable to extract data from response", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
