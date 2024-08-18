@@ -12,14 +12,14 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 @Component
-public class CurrencyBeaconApiProvider {
+public class BeaconCurrencyApiProvider {
 
     private static final String CURRENCY_BEACON_API_KEY = System.getenv("CURRENCY_BEACON_API_KEY");
 
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
 
-    public CurrencyBeaconApiProvider(ObjectMapper objectMapper, HttpClient httpClient) {
+    public BeaconCurrencyApiProvider(ObjectMapper objectMapper, HttpClient httpClient) {
         this.objectMapper = objectMapper;
         this.httpClient = httpClient;
     }
