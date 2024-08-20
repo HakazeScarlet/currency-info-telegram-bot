@@ -1,7 +1,12 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.hakazescarlet.currencyinfotelegrambot.configuration.CurrencyInfoTgBotConfiguration;
 import com.github.hakazescarlet.currencyinfotelegrambot.exception.IOResourceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -18,10 +23,13 @@ public class BeaconCurrencyApiProvider {
 
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
+    private final CacheManager cacheManager;
 
-    public BeaconCurrencyApiProvider(ObjectMapper objectMapper, HttpClient httpClient) {
+    @Autowired
+    public BeaconCurrencyApiProvider(ObjectMapper objectMapper, HttpClient httpClient, CacheManager cacheManager) {
         this.objectMapper = objectMapper;
         this.httpClient = httpClient;
+        this.cacheManager = cacheManager;
     }
 
     public BeaconConvertMapper convert(String current, String target, BigDecimal amount) {
@@ -48,7 +56,18 @@ public class BeaconCurrencyApiProvider {
         return beaconConvertMapper;
     }
 
-    public BeaconExchangeRatesHolder getCurrencyBeaconExchangeRates(String baseCurrency) {
+    public BeaconExchangeRatesHolder getExchangeRates(String baseCurrency) {
+        Cache cache = cacheManager.getCache(CurrencyInfoTgBotConfiguration.CACHE_NAME);
+        Cache.ValueWrapper valueWrapper = cache.get(baseCurrency);
+        BeaconExchangeRatesHolder result = (BeaconExchangeRatesHolder) valueWrapper.get();
+        if (result == null) {
+            return getRates(baseCurrency);
+        }
+        return result;
+    }
+
+    @Cacheable(cacheNames = CurrencyInfoTgBotConfiguration.CACHE_NAME, key = "baseCurrency")
+    public BeaconExchangeRatesHolder getRates(String baseCurrency) {
         URI uri = URI.create("https://api.currencybeacon.com/v1/latest?api_key="
             + CURRENCY_BEACON_API_KEY
             + "&base=" + baseCurrency);

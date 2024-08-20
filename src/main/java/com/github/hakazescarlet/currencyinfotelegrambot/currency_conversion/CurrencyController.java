@@ -20,8 +20,8 @@ public class CurrencyController {
     public ResponseEntity<BigDecimal> convert(
         @RequestParam String from,
         @RequestParam String to,
-        @RequestParam Double amount) {
-        BigDecimal result = currencyConverter.convert(from, to, BigDecimal.valueOf(amount));
-        return ResponseEntity.ok(result);
+        @RequestParam Double amount
+    ) {
+        return ResponseEntity.ok(currencyConverter.convert(from, to, BigDecimal.valueOf(amount)));
     }
 }
