@@ -18,10 +18,10 @@ public class CurrencyController {
 
     @GetMapping("/convert")
     public ResponseEntity<BigDecimal> convert(
-        @RequestParam String from,
-        @RequestParam String to,
+        @RequestParam String current,
+        @RequestParam String target,
         @RequestParam Double amount
     ) {
-        return ResponseEntity.ok(currencyConverter.convert(from, to, BigDecimal.valueOf(amount)));
+        return ResponseEntity.ok(currencyConverter.convert(current, target, BigDecimal.valueOf(amount)));
     }
 }

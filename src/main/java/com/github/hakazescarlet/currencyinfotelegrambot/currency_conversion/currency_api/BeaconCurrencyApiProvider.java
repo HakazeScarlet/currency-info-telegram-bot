@@ -58,12 +58,12 @@ public class BeaconCurrencyApiProvider {
 
     public BeaconExchangeRatesHolder getExchangeRates(String baseCurrency) {
         Cache cache = cacheManager.getCache(CurrencyInfoTgBotConfiguration.CACHE_NAME);
-        Cache.ValueWrapper valueWrapper = cache.get(baseCurrency);
-        BeaconExchangeRatesHolder result = (BeaconExchangeRatesHolder) valueWrapper.get();
-        if (result == null) {
+        BeaconExchangeRatesHolder ratesHolder = cache.get(baseCurrency, BeaconExchangeRatesHolder.class);
+
+        if (ratesHolder == null || ratesHolder.getRates() == null) {
             return getRates(baseCurrency);
         }
-        return result;
+        return ratesHolder;
     }
 
     @Cacheable(cacheNames = CurrencyInfoTgBotConfiguration.CACHE_NAME, key = "baseCurrency")
