@@ -18,6 +18,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.telegram:telegrambots-client:7.9.1'
+    implementation 'org.telegram:telegrambots-longpolling:7.9.1'
     implementation 'org.telegram:telegrambots:6.9.7.1'
     implementation 'org.springframework.boot:spring-boot-starter-cache:3.3.2'
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
