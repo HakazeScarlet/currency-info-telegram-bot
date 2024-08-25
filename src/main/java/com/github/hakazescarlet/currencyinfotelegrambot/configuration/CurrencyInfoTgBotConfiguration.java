@@ -8,6 +8,9 @@ import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.net.http.HttpClient;
 import java.util.concurrent.TimeUnit;
@@ -18,6 +21,12 @@ import java.util.concurrent.TimeUnit;
 public class CurrencyInfoTgBotConfiguration {
 
     public static final String CACHE_NAME = "currency-rates-cache";
+
+    // TODO: handle TelegramApiException
+    @Bean
+    public TelegramBotsApi createTelegramBotsApi() throws TelegramApiException {
+        return new TelegramBotsApi(DefaultBotSession.class);
+    }
 
     @Bean
     public ObjectMapper createObjectMapper() {
