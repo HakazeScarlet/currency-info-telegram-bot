@@ -19,6 +19,6 @@ public class TelegramBotService {
         this.telegramBotsApi = telegramBotsApi;
         this.scarletCurrencyConverterBot = scarletCurrencyConverterBot;
 
-        telegramBotsApi.registerBot(new ScarletCurrencyConverterBot();
+        telegramBotsApi.registerBot(new ScarletCurrencyConverterBot());
     }
 }
