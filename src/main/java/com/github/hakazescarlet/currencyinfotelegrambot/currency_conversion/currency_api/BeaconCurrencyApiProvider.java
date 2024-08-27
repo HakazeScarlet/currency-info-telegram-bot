@@ -1,12 +1,9 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.hakazescarlet.currencyinfotelegrambot.configuration.CurrencyInfoTgBotConfiguration;
 import com.github.hakazescarlet.currencyinfotelegrambot.exception.IOResourceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -56,17 +53,17 @@ public class BeaconCurrencyApiProvider {
         return beaconConvertMapper;
     }
 
-    public BeaconExchangeRatesHolder getExchangeRates(String baseCurrency) {
-        Cache cache = cacheManager.getCache(CurrencyInfoTgBotConfiguration.CACHE_NAME);
-        BeaconExchangeRatesHolder ratesHolder = cache.get(baseCurrency, BeaconExchangeRatesHolder.class);
+//    public BeaconExchangeRatesHolder getExchangeRates(String baseCurrency) {
+//        Cache cache = cacheManager.getCache(CurrencyInfoTgBotConfiguration.CACHE_NAME);
+//        BeaconExchangeRatesHolder ratesHolder = cache.get(baseCurrency, BeaconExchangeRatesHolder.class);
+//
+//        if (ratesHolder == null || ratesHolder.getRates() == null) {
+//            return getRates(baseCurrency);
+//        }
+//        return ratesHolder;
+//    }
 
-        if (ratesHolder == null || ratesHolder.getRates() == null) {
-            return getRates(baseCurrency);
-        }
-        return ratesHolder;
-    }
-
-    @Cacheable(cacheNames = CurrencyInfoTgBotConfiguration.CACHE_NAME, key = "baseCurrency")
+//    @Cacheable(cacheNames = CurrencyInfoTgBotConfiguration.CACHE_NAME, key = "baseCurrency")
     public BeaconExchangeRatesHolder getRates(String baseCurrency) {
         URI uri = URI.create("https://api.currencybeacon.com/v1/latest?api_key="
             + CURRENCY_BEACON_API_KEY

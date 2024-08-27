@@ -2,16 +2,19 @@ package com.github.hakazescarlet.currencyinfotelegrambot.telegram;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+@Component
 public class ScarletCurrencyConverterBot extends TelegramLongPollingBot {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public ScarletCurrencyConverterBot(String botToken) {
+    public ScarletCurrencyConverterBot(@Value("${telegram.bot.token}") String botToken) {
         super(botToken);
     }
 
@@ -41,7 +44,7 @@ public class ScarletCurrencyConverterBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "ScarletCurrencyConverterBot666";
+        return "ScarletCurrencyConverterBot";
     }
 
     @Override
