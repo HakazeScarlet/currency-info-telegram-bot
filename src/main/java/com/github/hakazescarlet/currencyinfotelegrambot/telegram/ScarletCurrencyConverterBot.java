@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -18,27 +19,29 @@ public class ScarletCurrencyConverterBot extends TelegramLongPollingBot {
         super(botToken);
     }
 
+    // TODO: add validation
     @Override
     public void onUpdateReceived(Update update) {
-        if  (update.hasMessage() && update.getMessage().hasText()) {
-            String  textFromUser  =  update.getMessage().getText();
+        Message message = update.getMessage();
+        if (update.hasMessage() && message.hasText()) {
+            String textFromUser = message.getText();
 
-            Long  userId  =  update.getMessage().getChatId();
-            String  userFirstName  =  update.getMessage().getFrom().getFirstName();
+            Long userId = message.getChatId();
+            String userFirstName = message.getFrom().getFirstName();
 
             logger.info("[{}, {}] : {}", userId, userFirstName, textFromUser);
 
-            SendMessage sendMessage  =  SendMessage.builder()
+            SendMessage sendMessage = SendMessage.builder()
                 .chatId(userId.toString())
-                .text( "Hello, I've received your text: "  + textFromUser)
+                .text("Hello, I've received your text: " + textFromUser)
                 .build();
-            try  {
+            try {
                 this.sendApiMethod(sendMessage);
-            }  catch  (TelegramApiException e) {
-                logger.error( "Exception when sending message: " , e);
+            } catch (TelegramApiException e) {
+                logger.error( "Exception when sending message: ", e);
             }
-        }  else  {
-            logger.warn( "Unexpected update from user" );
+        } else {
+            logger.warn("Unexpected update from user");
         }
     }
 

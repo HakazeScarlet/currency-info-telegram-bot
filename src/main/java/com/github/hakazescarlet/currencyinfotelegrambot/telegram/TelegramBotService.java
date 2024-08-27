@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class TelegramBotService {
 
     private final TelegramBotsApi telegramBotsApi;
-    private final ScarletCurrencyConverterBot scarletCurrencyConverterBot;
 
     // TODO: handle TelegramApiException
     public TelegramBotService(
@@ -17,8 +16,7 @@ public class TelegramBotService {
     ) throws TelegramApiException {
 
         this.telegramBotsApi = telegramBotsApi;
-        this.scarletCurrencyConverterBot = scarletCurrencyConverterBot;
 
-        telegramBotsApi.registerBot(new ScarletCurrencyConverterBot());
+        telegramBotsApi.registerBot(scarletCurrencyConverterBot);
     }
 }
