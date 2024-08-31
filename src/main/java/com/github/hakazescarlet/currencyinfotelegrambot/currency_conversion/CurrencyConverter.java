@@ -15,7 +15,10 @@ public class CurrencyConverter {
     private final ConversionRatesApiProvider currencyConverterApiProvider;
     private final BeaconCurrencyApiProvider beaconCurrencyApiProvider;
 
-    public CurrencyConverter(ConversionRatesApiProvider currencyConverterApiProvider, BeaconCurrencyApiProvider beaconCurrencyApiProvider) {
+    public CurrencyConverter(
+        ConversionRatesApiProvider currencyConverterApiProvider,
+        BeaconCurrencyApiProvider beaconCurrencyApiProvider
+    ) {
         this.currencyConverterApiProvider = currencyConverterApiProvider;
         this.beaconCurrencyApiProvider = beaconCurrencyApiProvider;
     }
