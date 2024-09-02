@@ -36,7 +36,7 @@ public class ScarletCurrencyConverterBot extends TelegramLongPollingBot {
         try {
             sendApiMethod(sendMessage);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            throw new MessageSendException("Sending message build failed");
         }
     }
 
@@ -97,5 +97,11 @@ public class ScarletCurrencyConverterBot extends TelegramLongPollingBot {
         replyKeyboardMarkup.setKeyboard(keyboard);
         sendMessage.setReplyMarkup(replyKeyboardMarkup);
         return sendMessage;
+    }
+
+    private final class MessageSendException extends RuntimeException {
+        public MessageSendException(String message) {
+            super(message);
+        }
     }
 }
