@@ -1,16 +1,13 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.fellbaum.jemoji.Emojis;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -19,51 +16,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ScarletCurrencyConverterBot extends TelegramLongPollingBot {
-
-    private static final Logger logger = LogManager.getLogger();
-
-    public ScarletCurrencyConverterBot(@Value("${telegram.bot.token}") String botToken) {
+public class CurrencyConversionBot extends TelegramLongPollingBot {
+    
+    public CurrencyConversionBot(@Value("${telegram.bot.token}") String botToken) {
         super(botToken);
     }
 
     // TODO: add validation
     @Override
     public void onUpdateReceived(Update update) {
+        Message message = update.getMessage();
         Long chatId = update.getMessage().getChatId();
-
         SendMessage sendMessage = createButtons(chatId);
+        sendMessage.setText(message.getText());
         try {
             sendApiMethod(sendMessage);
         } catch (TelegramApiException e) {
             throw new MessageSendException("Sending message build failed");
         }
     }
-
-//    @Override
-//    public void onUpdateReceived(Update update) {
-//        Message message = update.getMessage();
-//        if (update.hasMessage() && message.hasText()) {
-//            String textFromUser = message.getText();
-//
-//            Long userId = message.getChatId();
-//            String userFirstName = message.getFrom().getFirstName();
-//
-//            logger.info("[{}, {}] : {}", userId, userFirstName, textFromUser);
-//
-//            SendMessage sendMessage = SendMessage.builder()
-//                .chatId(userId.toString())
-//                .text("Hello, I've received your text: " + textFromUser)
-//                .build();
-//            try {
-//                this.sendApiMethod(sendMessage);
-//            } catch (TelegramApiException e) {
-//                logger.error( "Exception when sending message: ", e);
-//            }
-//        } else {
-//            logger.warn("Unexpected update from user");
-//        }
-//    }
 
     @Override
     public String getBotUsername() {
@@ -87,13 +58,25 @@ public class ScarletCurrencyConverterBot extends TelegramLongPollingBot {
         List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow keyboardFirstRow = new KeyboardRow();
-        keyboardFirstRow.add(new KeyboardButton("Help"));
+        keyboardFirstRow.add(new KeyboardButton("Convert " + Emojis.CURRENCY_EXCHANGE.getUnicode()));
+        keyboardFirstRow.add(new KeyboardButton("Favorite " + Emojis.STAR.getUnicode()));
 
         KeyboardRow keyboardSecondRow = new KeyboardRow();
-        keyboardSecondRow.add(new KeyboardButton("Test"));
+        keyboardSecondRow.add(new KeyboardButton("Retry last " + Emojis.RECYCLING_SYMBOL_UNQUALIFIED.getUnicode()));
+        keyboardSecondRow.add(new KeyboardButton("Swap current " + Emojis.CLOCKWISE_VERTICAL_ARROWS.getUnicode()));
+
+        KeyboardRow keyboardThirdRow = new KeyboardRow();
+        keyboardThirdRow.add(new KeyboardButton("Donate " + Emojis.MONEY_WITH_WINGS.getUnicode()));
+        keyboardThirdRow.add(new KeyboardButton("Help " + Emojis.CLIPBOARD.getUnicode()));
+        keyboardThirdRow.add(new KeyboardButton("Feedback " + Emojis.MEMO.getUnicode()));
+
+        KeyboardRow keyboardFourthRow = new KeyboardRow();
+        keyboardFourthRow.add(new KeyboardButton("Cancel " + Emojis.PROHIBITED.getUnicode()));
 
         keyboard.add(keyboardFirstRow);
         keyboard.add(keyboardSecondRow);
+        keyboard.add(keyboardThirdRow);
+        keyboard.add(keyboardFourthRow);
         replyKeyboardMarkup.setKeyboard(keyboard);
         sendMessage.setReplyMarkup(replyKeyboardMarkup);
         return sendMessage;
