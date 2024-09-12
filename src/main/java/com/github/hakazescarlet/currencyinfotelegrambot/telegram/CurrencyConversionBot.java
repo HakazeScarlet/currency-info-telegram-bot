@@ -1,5 +1,6 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram;
 
+import lombok.SneakyThrows;
 import net.fellbaum.jemoji.Emojis;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -10,10 +11,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class CurrencyConversionBot extends TelegramLongPollingBot {
@@ -23,22 +26,49 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
     }
 
     // TODO: add validation
+    @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
-        Long chatId = update.getMessage().getChatId();
-        SendMessage sendMessage = createButtons(chatId);
-        sendMessage.setText(message.getText());
-        try {
+        Map<Long, String> currenciesConversionInfo = new HashMap<>();
+        if (message.getText().equals("/start")) {
+            Long chatId = update.getMessage().getChatId();
+            SendMessage sendMessage = createButtons(chatId);
+            sendMessage.setText("info message");
             sendApiMethod(sendMessage);
-        } catch (TelegramApiException e) {
-            throw new MessageSendException("Sending message build failed");
+        } else {
+            if (message.getText().equals("Convert " + Emojis.CURRENCY_EXCHANGE.getUnicode())) {
+                SendMessage convertFirstMessage = new SendMessage();
+                convertFirstMessage.setChatId(message.getChatId());
+                convertFirstMessage.setText("Convert from ");
+                sendApiMethod(convertFirstMessage);
+                String fromCurrencyMessage = update.getMessage().getText();
+
+                SendMessage convertSecondMessage = new SendMessage();
+                convertSecondMessage.setChatId(message.getChatId());
+                convertSecondMessage.setText("Convert to ");
+                sendApiMethod(convertSecondMessage);
+                String toCurrencyMessage = update.getMessage().getText();
+
+                SendMessage convertThirdMessage = new SendMessage();
+                convertThirdMessage.setChatId(message.getChatId());
+                convertThirdMessage.setText("Amount of " + fromCurrencyMessage);
+                sendApiMethod(convertThirdMessage);
+                String amountMessage = update.getMessage().getText();
+
+                currenciesConversionInfo.put(message.getChatId(), fromCurrencyMessage);
+                currenciesConversionInfo.put(message.getChatId(), toCurrencyMessage);
+                currenciesConversionInfo.put(message.getChatId(), amountMessage);
+            } else if (message.getText().equals("Help " + Emojis.CLIPBOARD.getUnicode())) {
+                InputStream info = CurrencyConversionBot.class.getResourceAsStream("infoMessage.txt");
+                new SendMessage().setText(info.toString());
+            }
         }
     }
 
     @Override
     public String getBotUsername() {
-        return "ScarletCurrencyConverterBot";
+        return "Scarlet_Currency_Converter_Bot";
     }
 
     @Override

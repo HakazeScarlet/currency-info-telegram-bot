@@ -20,12 +20,11 @@ repositories {
 dependencies {
     implementation 'net.fellbaum:jemoji:1.5.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
-//    implementation 'org.telegram:telegrambots-client:7.9.1'
-//    implementation 'org.telegram:telegrambots-longpolling:7.9.1'
     implementation 'org.telegram:telegrambots:6.9.7.1'
     implementation 'org.springframework.boot:spring-boot-starter-cache:3.3.2'
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok:1.18.34'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
