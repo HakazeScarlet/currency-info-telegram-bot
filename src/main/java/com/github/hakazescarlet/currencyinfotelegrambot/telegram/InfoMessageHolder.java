@@ -16,12 +16,17 @@ public final class InfoMessageHolder {
         try {
             this.infoMessage = resource.getContentAsString(StandardCharsets.UTF_8);
         } catch (IOException e) {
-            // TODO: handle exception
-            throw new RuntimeException(e);
+            throw new InfoMessageReadingException("Failed to extract data from infoMessage.txt", e);
         }
     }
 
     public String get() {
         return infoMessage;
+    }
+
+    private final class InfoMessageReadingException extends RuntimeException {
+        public InfoMessageReadingException(String message, Exception e) {
+            super(message, e);
+        }
     }
 }
