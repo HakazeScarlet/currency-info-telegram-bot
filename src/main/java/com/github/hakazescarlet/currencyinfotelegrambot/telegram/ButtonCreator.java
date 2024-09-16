@@ -1,7 +1,7 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram;
 
 import net.fellbaum.jemoji.Emojis;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
@@ -10,10 +10,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Component
 public class ButtonCreator {
 
-    public SendMessage createButtons(long chatId) {
+    // TODO: refactor this part
+    public SendMessage create(long chatId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
 
@@ -25,27 +26,27 @@ public class ButtonCreator {
         List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow keyboardFirstRow = new KeyboardRow();
-        keyboardFirstRow.add(new KeyboardButton(ButtonsTitle.CONVERT.getButtonsTitle()
+        keyboardFirstRow.add(new KeyboardButton(ButtonTitle.CONVERT.getTitle()
             + Emojis.CURRENCY_EXCHANGE.getUnicode()));
-        keyboardFirstRow.add(new KeyboardButton(ButtonsTitle.FAVORITE.getButtonsTitle()
+        keyboardFirstRow.add(new KeyboardButton(ButtonTitle.FAVORITE.getTitle()
             + Emojis.STAR.getUnicode()));
 
         KeyboardRow keyboardSecondRow = new KeyboardRow();
-        keyboardSecondRow.add(new KeyboardButton(ButtonsTitle.RETRY_LAST.getButtonsTitle()
+        keyboardSecondRow.add(new KeyboardButton(ButtonTitle.RETRY_LAST.getTitle()
             + Emojis.RECYCLING_SYMBOL_UNQUALIFIED.getUnicode()));
-        keyboardSecondRow.add(new KeyboardButton(ButtonsTitle.SWAP_CURRENT.getButtonsTitle()
+        keyboardSecondRow.add(new KeyboardButton(ButtonTitle.SWAP_CURRENT.getTitle()
             + Emojis.CLOCKWISE_VERTICAL_ARROWS.getUnicode()));
 
         KeyboardRow keyboardThirdRow = new KeyboardRow();
-        keyboardThirdRow.add(new KeyboardButton(ButtonsTitle.DONATE.getButtonsTitle()
+        keyboardThirdRow.add(new KeyboardButton(ButtonTitle.DONATE.getTitle()
             + Emojis.MONEY_WITH_WINGS.getUnicode()));
-        keyboardThirdRow.add(new KeyboardButton(ButtonsTitle.HELP.getButtonsTitle()
+        keyboardThirdRow.add(new KeyboardButton(ButtonTitle.HELP.getTitle()
             + Emojis.CLIPBOARD.getUnicode()));
-        keyboardThirdRow.add(new KeyboardButton(ButtonsTitle.FEEDBACK.getButtonsTitle()
+        keyboardThirdRow.add(new KeyboardButton(ButtonTitle.FEEDBACK.getTitle()
             + Emojis.MEMO.getUnicode()));
 
         KeyboardRow keyboardFourthRow = new KeyboardRow();
-        keyboardFourthRow.add(new KeyboardButton(ButtonsTitle.CANCEL.getButtonsTitle()
+        keyboardFourthRow.add(new KeyboardButton(ButtonTitle.CANCEL.getTitle()
             + Emojis.PROHIBITED.getUnicode()));
 
         keyboard.add(keyboardFirstRow);

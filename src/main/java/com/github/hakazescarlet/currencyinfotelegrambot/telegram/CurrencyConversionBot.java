@@ -8,23 +8,26 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component
 public class CurrencyConversionBot extends TelegramLongPollingBot {
 
+    private final Map<String, ChatState> chatState = new HashMap<>();
     private final ButtonCreator buttonCreator;
-    
-    public CurrencyConversionBot(@Value("${telegram.bot.token}") String botToken, ButtonCreator buttonCreator) {
+    private final InfoMessageHolder infoMessageHolder;
+
+    public CurrencyConversionBot(
+        @Value("${telegram.bot.token}") String botToken,
+        ButtonCreator buttonCreator,
+        InfoMessageHolder infoMessageHolder
+    ) {
         super(botToken);
         this.buttonCreator = buttonCreator;
+        this.infoMessageHolder = infoMessageHolder;
     }
 
     // TODO: add validation
@@ -32,17 +35,19 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
-        Map<String, ChatState> userInfoMap = new HashMap<>();
+        Long chatId = update.getMessage().getChatId();
         if (message.getText().equals("/start")) {
-            Long chatId = update.getMessage().getChatId();
-            SendMessage sendMessage = buttonCreator.createButtons(chatId);
-            sendMessage.setText("info message");
+            SendMessage sendMessage = buttonCreator.create(chatId);
+            sendMessage.setText(infoMessageHolder.get());
             sendApiMethod(sendMessage);
         } else {
-            if (message.getText().equals("Convert " + Emojis.CURRENCY_EXCHANGE.getUnicode())) {
+            if (message.getText().contains(ButtonTitle.CONVERT.getTitle())) {
 
-            } else if (message.getText().equals("Help " + Emojis.CLIPBOARD.getUnicode())) {
-
+            } else if (message.getText().contains(ButtonTitle.HELP.getTitle())) {
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setChatId(chatId);
+                sendMessage.setText(infoMessageHolder.get());
+                sendApiMethod(sendMessage);
             }
         }
     }
@@ -55,11 +60,5 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
     @Override
     public void onRegister() {
         super.onRegister();
-    }
-
-    private final class MessageSendException extends RuntimeException {
-        public MessageSendException(String message) {
-            super(message);
-        }
     }
 }

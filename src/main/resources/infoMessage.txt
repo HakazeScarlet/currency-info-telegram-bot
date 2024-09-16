@@ -1,1 +1,9 @@
-hello!
+'Times New Roman', Times, serif	Съешь же ещё этих мягких французских булок
+Georgia, serif	Съешь же ещё этих мягких французских булок
+Arial, Helvetica, sans-serif	Съешь же ещё этих мягких французских булок
+'Arial Black', Gadget, sans-serif	Съешь же ещё этих мягких французских булок
+Verdana, Geneva, sans-serif	Съешь же ещё этих мягких французских булок
+'Trebuchet MS', Helvetica, sans-serif	Съешь же ещё этих мягких французских булок
+Impact, Charcoal, sans-serif	Съешь же ещё этих мягких французских булок
+'Comic Sans MS', cursive, sans-serif	Съешь же ещё этих мягких французских булок
+'Courier New', Courier, monospace	Съешь же ещё этих мягких французских булок

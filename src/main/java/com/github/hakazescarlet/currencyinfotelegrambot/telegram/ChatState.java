@@ -1,12 +1,11 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class ChatState {
 
     private String chatId;
     private String action;
+
+    // TODO: extract to separate object named ConversionInfo
     private String current;
     private String target;
     private Double amount;
