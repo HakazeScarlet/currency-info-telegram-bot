@@ -16,7 +16,7 @@ public final class InfoMessageHolder {
         try {
             this.infoMessage = resource.getContentAsString(StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new InfoMessageReadingException("Failed to extract data from infoMessage.txt", e);
+            throw new InfoMessageReadingException("Failed to extract data from info message", e);
         }
     }
 
@@ -25,6 +25,7 @@ public final class InfoMessageHolder {
     }
 
     private final class InfoMessageReadingException extends RuntimeException {
+
         public InfoMessageReadingException(String message, Exception e) {
             super(message, e);
         }

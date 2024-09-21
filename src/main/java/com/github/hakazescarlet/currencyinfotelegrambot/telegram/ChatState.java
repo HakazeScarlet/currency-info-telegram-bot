@@ -2,7 +2,7 @@ package com.github.hakazescarlet.currencyinfotelegrambot.telegram;
 
 public class ChatState {
 
-    private String chatId;
+    private Long chatId;
     private String action;
 
     // TODO: extract to separate object named ConversionInfo
@@ -10,11 +10,11 @@ public class ChatState {
     private String target;
     private Double amount;
 
-    public String getChatId() {
+    public Long getChatId() {
         return chatId;
     }
 
-    public void setChatId(String chatId) {
+    public void setChatId(Long chatId) {
         this.chatId = chatId;
     }
 
