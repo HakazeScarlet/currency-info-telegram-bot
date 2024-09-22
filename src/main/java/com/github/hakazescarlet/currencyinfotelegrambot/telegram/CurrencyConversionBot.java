@@ -1,6 +1,8 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram;
 
+import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
 import lombok.SneakyThrows;
+import net.fellbaum.jemoji.Emojis;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -8,6 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,15 +20,18 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
     private final Map<Long, ChatState> chatStates = new HashMap<>();
     private final ButtonCreator buttonCreator;
     private final InfoMessageHolder infoMessageHolder;
+    private final CurrencyConverter currencyConverter;
 
     public CurrencyConversionBot(
         @Value("${telegram.bot.token}") String botToken,
         ButtonCreator buttonCreator,
-        InfoMessageHolder infoMessageHolder
+        InfoMessageHolder infoMessageHolder,
+        CurrencyConverter currencyConverter
     ) {
         super(botToken);
         this.buttonCreator = buttonCreator;
         this.infoMessageHolder = infoMessageHolder;
+        this.currencyConverter = currencyConverter;
     }
 
     // TODO: add validation
@@ -53,25 +59,54 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
                     sendMessage.setChatId(chatId);
                     sendMessage.setText("Convert from");
                     sendApiMethod(sendMessage);
-
-                    ChatState currentState = new ChatState();
-                    currentState.setCurrent(message.getText());
-                    currentState.setChatId(chatId);
-                    chatStates.put(chatId, currentState);
+                    return;
                 }
 
-                if (chatStates.get(chatId).getAction().contains(ButtonTitle.CONVERT.getTitle())
-                    && chatStates.get(chatId).getCurrent() != null) {
+                ChatState chatState = chatStates.get(chatId);
+
+                if (chatState != null && chatState.getAction().contains(ButtonTitle.CONVERT.getTitle())
+                    && chatState.getCurrent() == null) {
+
+                    chatState.setCurrent(message.getText());
+                    chatStates.put(chatId, chatState);
 
                     SendMessage sendMessage = new SendMessage();
                     sendMessage.setChatId(chatId);
                     sendMessage.setText("Convert to");
                     sendApiMethod(sendMessage);
+                    return;
+                }
 
-                    ChatState targetState = new ChatState();
-                    targetState.setTarget(message.getText());
-                    targetState.setChatId(chatId);
-                    chatStates.put(chatId, targetState);
+                if (chatState != null && chatState.getAction().contains(ButtonTitle.CONVERT.getTitle())
+                    && chatState.getCurrent() != null) {
+
+                    chatState.setTarget(message.getText());
+                    chatStates.put(chatId, chatState);
+
+                    SendMessage sendMessage = new SendMessage();
+                    sendMessage.setChatId(chatId);
+                    sendMessage.setText("Amount of " + chatState.getCurrent());
+                    sendApiMethod(sendMessage);
+                    return;
+                }
+
+                if (chatState != null && chatState.getAction().contains(ButtonTitle.CONVERT.getTitle())
+                    && chatState.getCurrent() != null
+                    && chatState.getTarget() != null) {
+
+                    chatState.setAmount(Double.valueOf(message.getText()));
+                    chatStates.put(chatId, chatState);
+
+                    SendMessage sendMessage = new SendMessage();
+                    sendMessage.setText(chatState.getAmount()
+                        + " " + chatState.getCurrent()
+                        + " " + Emojis.RIGHT_ARROW
+                        + " " + chatState.getTarget()
+                        + " " + currencyConverter.convert(
+                        chatState.getCurrent(),
+                        chatState.getTarget(),
+                        BigDecimal.valueOf(chatState.getAmount())).toString());
+                    sendApiMethod(sendMessage);
                 }
 
             } else if (message.getText().contains(ButtonTitle.HELP.getTitle())) {
