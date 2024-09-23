@@ -31,6 +31,7 @@ public class CurrencyConverter {
 
         BeaconExchangeRatesHolder beaconExchangeRatesHolder = beaconCurrencyApiProvider.getRates(current);
         Map<String, Double> conversionRates = beaconExchangeRatesHolder.getRates();
-        return BigDecimal.valueOf(conversionRates.get(target)).multiply(amount).setScale(2, RoundingMode.HALF_UP);
+        Double currencyRate = conversionRates.get(target);
+        return BigDecimal.valueOf(currencyRate).multiply(amount).setScale(2, RoundingMode.HALF_UP);
     }
 }

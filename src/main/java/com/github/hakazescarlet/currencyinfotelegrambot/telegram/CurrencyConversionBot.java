@@ -67,7 +67,7 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
                 if (chatState != null && chatState.getAction().contains(ButtonTitle.CONVERT.getTitle())
                     && chatState.getCurrent() == null) {
 
-                    chatState.setCurrent(message.getText());
+                    chatState.setCurrent(message.getText().toUpperCase());
                     chatStates.put(chatId, chatState);
 
                     SendMessage sendMessage = new SendMessage();
@@ -78,9 +78,10 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
                 }
 
                 if (chatState != null && chatState.getAction().contains(ButtonTitle.CONVERT.getTitle())
-                    && chatState.getCurrent() != null) {
+                    && chatState.getCurrent() != null
+                    && chatState.getTarget() == null) {
 
-                    chatState.setTarget(message.getText());
+                    chatState.setTarget(message.getText().toUpperCase());
                     chatStates.put(chatId, chatState);
 
                     SendMessage sendMessage = new SendMessage();
@@ -92,21 +93,26 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
 
                 if (chatState != null && chatState.getAction().contains(ButtonTitle.CONVERT.getTitle())
                     && chatState.getCurrent() != null
-                    && chatState.getTarget() != null) {
+                    && chatState.getTarget() != null
+                    && chatState.getAmount() == null) {
 
-                    chatState.setAmount(Double.valueOf(message.getText()));
+                    chatState.setAmount(Math.abs(Double.parseDouble(message.getText())));
                     chatStates.put(chatId, chatState);
 
                     SendMessage sendMessage = new SendMessage();
+                    sendMessage.setChatId(chatId);
                     sendMessage.setText(chatState.getAmount()
                         + " " + chatState.getCurrent()
-                        + " " + Emojis.RIGHT_ARROW
+                        + " " + Emojis.RIGHT_ARROW.getUnicode()
                         + " " + chatState.getTarget()
                         + " " + currencyConverter.convert(
                         chatState.getCurrent(),
                         chatState.getTarget(),
                         BigDecimal.valueOf(chatState.getAmount())).toString());
                     sendApiMethod(sendMessage);
+
+                    chatStates.remove(chatId);
+                    return;
                 }
 
             } else if (message.getText().contains(ButtonTitle.HELP.getTitle())) {
