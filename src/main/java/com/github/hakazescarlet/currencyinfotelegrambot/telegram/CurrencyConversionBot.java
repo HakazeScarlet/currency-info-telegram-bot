@@ -17,7 +17,6 @@ import java.util.Map;
 public class CurrencyConversionBot extends TelegramLongPollingBot {
 
     private final Map<Long, ChatState> chatStates = new HashMap<>();
-    private final InfoMessageHolder infoMessageHolder;
     private final List<ButtonAction> buttonActions;
 
     public CurrencyConversionBot(
@@ -26,7 +25,6 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
         List<ButtonAction> buttonActions
     ) {
         super(botToken);
-        this.infoMessageHolder = infoMessageHolder;
         this.buttonActions = buttonActions;
     }
 
@@ -48,14 +46,6 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
                 }
             });
     }
-
-//            } else if (message.getText().contains(ButtonTitle.HELP.getTitle())) {
-//                SendMessage sendMessage = new SendMessage();
-//                sendMessage.setChatId(chatId);
-//                sendMessage.setText(infoMessageHolder.get());
-//                sendApiMethod(sendMessage);
-//            }
-
 
     @Override
     public String getBotUsername() {
