@@ -21,7 +21,6 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
 
     public CurrencyConversionBot(
         @Value("${telegram.bot.token}") String botToken,
-        InfoMessageHolder infoMessageHolder,
         List<ButtonAction> buttonActions
     ) {
         super(botToken);

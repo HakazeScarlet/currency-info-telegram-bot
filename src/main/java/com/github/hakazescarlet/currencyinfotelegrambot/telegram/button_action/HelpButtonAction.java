@@ -27,8 +27,8 @@ public class HelpButtonAction implements ButtonAction {
     @Override
     public void doAction(Message message, Map<Long, ChatState> chatStates, Consumer<SendMessage> botApiMethod) {
         SendMessage sendMessage = new SendMessage();
-                sendMessage.setChatId(message.getChatId());
-                sendMessage.setText(infoMessageHolder.get());
-                botApiMethod.accept(sendMessage);
+        sendMessage.setChatId(message.getChatId());
+        sendMessage.setText(infoMessageHolder.get());
+        botApiMethod.accept(sendMessage);
     }
 }
