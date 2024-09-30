@@ -1,37 +1,33 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram;
 
-import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
+import com.github.hakazescarlet.currencyinfotelegrambot.telegram.button_action.ButtonAction;
 import lombok.SneakyThrows;
-import net.fellbaum.jemoji.Emojis;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
 public class CurrencyConversionBot extends TelegramLongPollingBot {
 
     private final Map<Long, ChatState> chatStates = new HashMap<>();
-    private final ButtonCreator buttonCreator;
     private final InfoMessageHolder infoMessageHolder;
-    private final CurrencyConverter currencyConverter;
+    private final List<ButtonAction> buttonActions;
 
     public CurrencyConversionBot(
         @Value("${telegram.bot.token}") String botToken,
-        ButtonCreator buttonCreator,
         InfoMessageHolder infoMessageHolder,
-        CurrencyConverter currencyConverter
+        List<ButtonAction> buttonActions
     ) {
         super(botToken);
-        this.buttonCreator = buttonCreator;
         this.infoMessageHolder = infoMessageHolder;
-        this.currencyConverter = currencyConverter;
+        this.buttonActions = buttonActions;
     }
 
     // TODO: add validation
@@ -39,90 +35,27 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
-        Long chatId = update.getMessage().getChatId();
-        if (message.getText().equals("/start")) {
-            SendMessage sendMessage = buttonCreator.create(chatId);
-            sendMessage.setText(infoMessageHolder.get());
-            sendApiMethod(sendMessage);
-        } else {
-            if (message.getText().contains(ButtonTitle.CONVERT.getTitle())
-                || chatStates.containsKey(chatId)) {
 
-                if (!chatStates.containsKey(chatId)) {
-                    ChatState actionChatState = new ChatState();
-                    actionChatState.setAction(ButtonTitle.CONVERT.getTitle());
-                    actionChatState.setChatId(chatId);
-
-                    chatStates.put(chatId, actionChatState);
-
-                    SendMessage sendMessage = new SendMessage();
-                    sendMessage.setChatId(chatId);
-                    sendMessage.setText("Convert from");
-                    sendApiMethod(sendMessage);
-                    return;
+        buttonActions.stream()
+            .filter(buttonAction -> buttonAction.isApplicable(message, chatStates))
+            .findFirst()
+            .orElseThrow(RuntimeException::new)
+            .doAction(message, chatStates, (sm) -> {
+                try {
+                    super.sendApiMethod(sm);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
                 }
-
-                ChatState chatState = chatStates.get(chatId);
-
-                if (chatState != null && chatState.getAction().contains(ButtonTitle.CONVERT.getTitle())
-                    && chatState.getCurrent() == null) {
-
-                    chatState.setCurrent(message.getText().toUpperCase());
-                    chatStates.put(chatId, chatState);
-
-                    SendMessage sendMessage = new SendMessage();
-                    sendMessage.setChatId(chatId);
-                    sendMessage.setText("Convert to");
-                    sendApiMethod(sendMessage);
-                    return;
-                }
-
-                if (chatState != null && chatState.getAction().contains(ButtonTitle.CONVERT.getTitle())
-                    && chatState.getCurrent() != null
-                    && chatState.getTarget() == null) {
-
-                    chatState.setTarget(message.getText().toUpperCase());
-                    chatStates.put(chatId, chatState);
-
-                    SendMessage sendMessage = new SendMessage();
-                    sendMessage.setChatId(chatId);
-                    sendMessage.setText("Amount of " + chatState.getCurrent());
-                    sendApiMethod(sendMessage);
-                    return;
-                }
-
-                if (chatState != null && chatState.getAction().contains(ButtonTitle.CONVERT.getTitle())
-                    && chatState.getCurrent() != null
-                    && chatState.getTarget() != null
-                    && chatState.getAmount() == null) {
-
-                    chatState.setAmount(Math.abs(Double.parseDouble(message.getText())));
-                    chatStates.put(chatId, chatState);
-
-                    SendMessage sendMessage = new SendMessage();
-                    sendMessage.setChatId(chatId);
-                    sendMessage.setText(chatState.getAmount()
-                        + " " + chatState.getCurrent()
-                        + " " + Emojis.RIGHT_ARROW.getUnicode()
-                        + " " + chatState.getTarget()
-                        + " " + currencyConverter.convert(
-                        chatState.getCurrent(),
-                        chatState.getTarget(),
-                        BigDecimal.valueOf(chatState.getAmount())).toString());
-                    sendApiMethod(sendMessage);
-
-                    chatStates.remove(chatId);
-                    return;
-                }
-
-            } else if (message.getText().contains(ButtonTitle.HELP.getTitle())) {
-                SendMessage sendMessage = new SendMessage();
-                sendMessage.setChatId(chatId);
-                sendMessage.setText(infoMessageHolder.get());
-                sendApiMethod(sendMessage);
-            }
-        }
+            });
     }
+
+//            } else if (message.getText().contains(ButtonTitle.HELP.getTitle())) {
+//                SendMessage sendMessage = new SendMessage();
+//                sendMessage.setChatId(chatId);
+//                sendMessage.setText(infoMessageHolder.get());
+//                sendApiMethod(sendMessage);
+//            }
+
 
     @Override
     public String getBotUsername() {
