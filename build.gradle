@@ -18,6 +18,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.mongodb:mongodb-driver-sync:5.2.0'
     implementation 'net.fellbaum:jemoji:1.5.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
     implementation 'org.telegram:telegrambots:6.9.7.1'

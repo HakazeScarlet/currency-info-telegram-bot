@@ -1,0 +1,14 @@
+services:
+  mongo_db:
+    image: mongo:5.0
+    container_name: users_db
+    ports:
+      - "27017:27018"
+    volumes:
+      - ./auth/:/docker-entrypoint-initdb.d/*.js
+      - ./mongodb:/data/db 777
+    environment:
+      MONGO_INITDB_DATABASE: users_db
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: pass
+    command: [--auth]
