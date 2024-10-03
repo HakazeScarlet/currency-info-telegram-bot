@@ -1,9 +1,11 @@
+version: '3.8'
+
 services:
   mongo_db:
     image: mongo:5.0
-    container_name: users_db
+    container_name: users_mdb
     ports:
-      - "27017:27018"
+      - "27017:27017"
     volumes:
       - ./auth/:/docker-entrypoint-initdb.d/*.js
       - ./mongodb:/data/db 777
