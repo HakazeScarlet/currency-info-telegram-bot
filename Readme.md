@@ -57,3 +57,8 @@ That was enough and when I clicked the connect button, I had access to my local
 database ready to go access to my local database, ready for work.
 
 ![db in compass](src/main/resources/readme_image/db_compass.png)
+
+## Helpful links
+
+- https://www.mongodb.com/community/forums/t/syntax-error-missing-semicolon/203269/3
+- https://www.mongodb.com/products/tools/compass
