@@ -2,6 +2,9 @@ package com.github.hakazescarlet.currencyinfotelegrambot.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
@@ -55,6 +58,22 @@ public class CurrencyInfoTgBotConfiguration {
 
     @Bean
     public MongoClient createMongoClient() {
-        return MongoClients.create("mongodb://localhost:27017");
+        try {
+            // TODO: extract to envs
+            MongoCredential scramSha1Credential = MongoCredential.createScramSha1Credential("admin", "users_db", "pass".toCharArray());
+
+            MongoClientSettings settings = MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString("mongodb://localhost:27017"))    // TODO: extract to envs
+                .credential(scramSha1Credential)
+                .build();
+            MongoClient mongoClient = MongoClients.create(settings);
+            // TODO: remove this line after library version changing with mongo
+            MongoDatabase db = mongoClient.getDatabase("users_db");
+            return mongoClient;
+        } catch (Exception exception) {
+            // TODO: handle custom exception
+            throw new RuntimeException(exception);
+        }
+//        return MongoClients.create("mongodb://admin:pass@localhost:27017");
     }
 }

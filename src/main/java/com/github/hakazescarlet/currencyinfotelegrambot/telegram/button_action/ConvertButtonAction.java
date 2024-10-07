@@ -19,7 +19,6 @@ public class ConvertButtonAction implements ButtonAction {
 
     private final CurrencyConverter currencyConverter;
     private final ChatInfoRepository chatInfoRepository;
-    private ChatInfo chatInfo;
 
     public ConvertButtonAction(CurrencyConverter currencyConverter, ChatInfoRepository chatInfoRepository) {
         this.currencyConverter = currencyConverter;
@@ -107,10 +106,14 @@ public class ConvertButtonAction implements ButtonAction {
 
             botApiMethod.accept(sendMessage);
 
-            chatInfoRepository.save(chatInfo);
-
+            saveChatInfo(chatState);
             chatStates.remove(chatId);
             return;
         }
+    }
+
+    private void saveChatInfo(ChatState chatState) {
+        ChatInfo chatInfo = new ChatInfo(chatState.getChatId(), chatState.getCurrent(), chatState.getTarget());
+        chatInfoRepository.save(chatInfo);
     }
 }

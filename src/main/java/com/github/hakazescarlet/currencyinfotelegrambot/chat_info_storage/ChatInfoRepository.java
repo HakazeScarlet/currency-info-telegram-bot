@@ -11,8 +11,6 @@ public class ChatInfoRepository {
 
     private final MongoClient mongoClient;
 
-    private ChatInfo chatInfo;
-
     public ChatInfoRepository(MongoClient mongoClient) {
         this.mongoClient = mongoClient;
     }
@@ -20,8 +18,7 @@ public class ChatInfoRepository {
     public void save(ChatInfo chatInfo) {
         MongoDatabase database = mongoClient.getDatabase("users_db");
         MongoCollection<Document> collection = database.getCollection("users_conversions");
-
-        collection.insertOne(new Document()
+        collection.insertOne(new Document()     // TODO: search about insert or update
             .append("id", chatInfo.getId())
             .append("current", chatInfo.getCurrent())
             .append("target", chatInfo.getTarget()));
