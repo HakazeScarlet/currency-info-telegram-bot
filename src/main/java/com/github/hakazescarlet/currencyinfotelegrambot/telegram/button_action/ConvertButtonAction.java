@@ -1,5 +1,7 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram.button_action;
 
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_info_storage.ChatInfo;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_info_storage.ChatInfoRepository;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
@@ -16,9 +18,12 @@ import java.util.function.Consumer;
 public class ConvertButtonAction implements ButtonAction {
 
     private final CurrencyConverter currencyConverter;
+    private final ChatInfoRepository chatInfoRepository;
+    private ChatInfo chatInfo;
 
-    public ConvertButtonAction(CurrencyConverter currencyConverter) {
+    public ConvertButtonAction(CurrencyConverter currencyConverter, ChatInfoRepository chatInfoRepository) {
         this.currencyConverter = currencyConverter;
+        this.chatInfoRepository = chatInfoRepository;
     }
 
     @Override
@@ -80,6 +85,7 @@ public class ConvertButtonAction implements ButtonAction {
             return;
         }
 
+        // TODO: add chat info saving to mongo
         if (chatState != null && chatState.getAction().contains(ButtonTitle.CONVERT.getTitle())
             && chatState.getCurrent() != null
             && chatState.getTarget() != null
@@ -100,6 +106,8 @@ public class ConvertButtonAction implements ButtonAction {
                 BigDecimal.valueOf(chatState.getAmount())).toString());
 
             botApiMethod.accept(sendMessage);
+
+            chatInfoRepository.save(chatInfo);
 
             chatStates.remove(chatId);
             return;

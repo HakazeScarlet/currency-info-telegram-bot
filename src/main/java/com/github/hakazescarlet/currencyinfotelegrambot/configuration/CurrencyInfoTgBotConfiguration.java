@@ -2,6 +2,9 @@ package com.github.hakazescarlet.currencyinfotelegrambot.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
@@ -48,5 +51,10 @@ public class CurrencyInfoTgBotConfiguration {
         CaffeineCacheManager caffeineCacheManager = new CaffeineCacheManager(CACHE_NAME);
         caffeineCacheManager.setCaffeine(caffeine);
         return caffeineCacheManager;
+    }
+
+    @Bean
+    public MongoClient createMongoClient() {
+        return MongoClients.create("mongodb://localhost:27017");
     }
 }
