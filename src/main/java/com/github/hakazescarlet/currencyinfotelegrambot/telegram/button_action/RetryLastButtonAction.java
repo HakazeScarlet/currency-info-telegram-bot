@@ -27,8 +27,11 @@ public class RetryLastButtonAction implements ButtonAction {
 
     @Override
     public boolean isApplicable(Message message, Map<Long, ChatState> chatStates) {
-        return message.getText().contains(ButtonTitle.RETRY_LAST.getTitle())
-            || chatStates.containsKey(message.getChatId());
+        ChatState chatStateId = chatStates.get(message.getChatId());
+        if (chatStateId != null) {
+            return chatStateId.getAction().equals(ButtonTitle.RETRY_LAST.getTitle());
+        }
+        return message.getText().contains(ButtonTitle.RETRY_LAST.getTitle());
     }
 
     @Override
@@ -63,7 +66,7 @@ public class RetryLastButtonAction implements ButtonAction {
                 return;
             }
         } else if (chatStates.containsKey(chatId) && chatStates.get(chatId).getAction().equals(ButtonTitle.RETRY_LAST.getTitle())) {
-            Double amount = Double.valueOf(message.getText());
+            Double amount = Math.abs(Double.parseDouble(message.getText()));
 
             ChatState chatState = chatStates.get(chatId);
             String current = chatState.getCurrent();
