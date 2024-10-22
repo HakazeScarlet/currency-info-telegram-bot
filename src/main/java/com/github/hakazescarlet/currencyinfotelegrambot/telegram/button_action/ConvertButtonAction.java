@@ -27,8 +27,10 @@ public class ConvertButtonAction implements ButtonAction {
 
     @Override
     public boolean isApplicable(Message message, Map<Long, ChatState> chatStates) {
-        return message.getText().contains(ButtonTitle.CONVERT.getTitle())
-            || chatStates.containsKey(message.getChatId());
+        if (!chatStates.isEmpty()) {
+            return ButtonTitle.CONVERT.getTitle().equals(chatStates.get(message.getChatId()).getAction());
+        }
+        return message.getText().contains(ButtonTitle.CONVERT.getTitle());
     }
 
     @Override

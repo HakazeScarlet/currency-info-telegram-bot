@@ -27,9 +27,9 @@ public class RetryLastButtonAction implements ButtonAction {
 
     @Override
     public boolean isApplicable(Message message, Map<Long, ChatState> chatStates) {
-        ChatState chatStateId = chatStates.get(message.getChatId());
-        if (chatStateId != null) {
-            return chatStateId.getAction().equals(ButtonTitle.RETRY_LAST.getTitle());
+        ChatState chatState = chatStates.get(message.getChatId());
+        if (chatState != null) {
+            return ButtonTitle.RETRY_LAST.getTitle().equals(chatState.getAction());
         }
         return message.getText().contains(ButtonTitle.RETRY_LAST.getTitle());
     }

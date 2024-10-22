@@ -35,11 +35,13 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
 
         buttonActions.stream()
             .filter(buttonAction -> buttonAction.isApplicable(message, chatStates))
-            .findFirst()
-            .orElseThrow(RuntimeException::new)
-            .doAction(message, chatStates, (sm) -> {
+            .reduce((a, b) -> {
+                throw new TwoAndMoreButtonActionMatchesException();
+            })
+            .orElseThrow(() -> new NoneButtonActionMatchesException())
+            .doAction(message, chatStates, (sendMessage) -> {
                 try {
-                    super.sendApiMethod(sm);
+                    super.sendApiMethod(sendMessage);
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }
@@ -51,8 +53,17 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
         return "Scarlet_Currency_Converter_Bot";
     }
 
-    @Override
-    public void onRegister() {
-        super.onRegister();
+    private final class TwoAndMoreButtonActionMatchesException extends RuntimeException {
+
+        public TwoAndMoreButtonActionMatchesException() {
+            super();
+        }
+    }
+
+    private final class NoneButtonActionMatchesException extends RuntimeException {
+
+        public NoneButtonActionMatchesException() {
+            super();
+        }
     }
 }
