@@ -14,6 +14,7 @@ import java.util.List;
 public class ButtonCreator {
 
     // TODO: refactor this part
+    // TODO: add history & fast convert buttons
     public SendMessage create(long chatId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));

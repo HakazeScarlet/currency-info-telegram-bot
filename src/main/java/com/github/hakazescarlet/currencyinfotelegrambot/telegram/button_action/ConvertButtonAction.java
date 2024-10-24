@@ -17,6 +17,8 @@ import java.util.function.Consumer;
 @Component
 public class ConvertButtonAction implements ButtonAction {
 
+    private static final String SEPARATOR = "\s";
+
     private final CurrencyConverter currencyConverter;
     private final ChatInfoRepository chatInfoRepository;
 
@@ -46,7 +48,11 @@ public class ConvertButtonAction implements ButtonAction {
 
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(chatId);
-            sendMessage.setText("Convert from");
+            sendMessage.setText(
+                "Add currencies to conversion and amount "
+                + "\nExample "
+                + Emojis.RIGHT_ARROW.getUnicode()
+                + " USD EUR 1000");
 
             botApiMethod.accept(sendMessage);
 
@@ -55,61 +61,31 @@ public class ConvertButtonAction implements ButtonAction {
 
         ChatState chatState = chatStates.get(chatId);
 
-        if (chatState != null && chatState.getAction().contains(ButtonTitle.CONVERT.getTitle())
-            && chatState.getCurrent() == null) {
+        if (chatState != null && ButtonTitle.CONVERT.getTitle().equals(chatState.getAction())) {
+            String convertMessage = message.getText();
+            String[] currencies = convertMessage.split(SEPARATOR);
 
-            chatState.setCurrent(message.getText().toUpperCase());
-            chatStates.put(chatId, chatState);
-
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.setChatId(chatId);
-            sendMessage.setText("Convert to");
-
-            botApiMethod.accept(sendMessage);
-
-            return;
-        }
-
-        if (chatState != null && chatState.getAction().contains(ButtonTitle.CONVERT.getTitle())
-            && chatState.getCurrent() != null
-            && chatState.getTarget() == null) {
-
-            chatState.setTarget(message.getText().toUpperCase());
-            chatStates.put(chatId, chatState);
+            chatState.setCurrent(currencies[0].toUpperCase());
+            chatState.setTarget(currencies[1].toUpperCase());
+            chatState.setAmount(Math.abs(Double.parseDouble(currencies[2])));
 
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(chatId);
-            sendMessage.setText("Amount of " + chatState.getCurrent());
+            String current = chatState.getCurrent();
+            String target = chatState.getTarget();
+            Double amount = chatState.getAmount();
+            BigDecimal converted = currencyConverter.convert(current, target, BigDecimal.valueOf(amount));
+            sendMessage.setText(
+                amount + SEPARATOR
+                + current + SEPARATOR
+                + Emojis.RIGHT_ARROW.getUnicode() + SEPARATOR
+                + converted + SEPARATOR
+                + target);
 
             botApiMethod.accept(sendMessage);
-
-            return;
-        }
-
-        // TODO: add chat info saving to mongo
-        if (chatState != null && chatState.getAction().contains(ButtonTitle.CONVERT.getTitle())
-            && chatState.getCurrent() != null
-            && chatState.getTarget() != null
-            && chatState.getAmount() == null) {
-
-            chatState.setAmount(Math.abs(Double.parseDouble(message.getText())));
-            chatStates.put(chatId, chatState);
-
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.setChatId(chatId);
-            sendMessage.setText(chatState.getAmount()
-                + " " + chatState.getCurrent()
-                + " " + Emojis.RIGHT_ARROW.getUnicode()
-                + " " + chatState.getTarget()
-                + " " + currencyConverter.convert(
-                chatState.getCurrent(),
-                chatState.getTarget(),
-                BigDecimal.valueOf(chatState.getAmount())).toString());
-
-            botApiMethod.accept(sendMessage);
-
             saveChatInfo(chatState);
             chatStates.remove(chatId);
+
             return;
         }
     }
