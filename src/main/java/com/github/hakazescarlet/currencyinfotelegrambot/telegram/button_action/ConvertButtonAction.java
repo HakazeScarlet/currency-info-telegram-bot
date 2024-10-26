@@ -80,7 +80,8 @@ public class ConvertButtonAction implements ButtonAction {
                 + current + SEPARATOR
                 + Emojis.RIGHT_ARROW.getUnicode() + SEPARATOR
                 + converted + SEPARATOR
-                + target);
+                + target
+            );
 
             botApiMethod.accept(sendMessage);
             saveChatInfo(chatState);
