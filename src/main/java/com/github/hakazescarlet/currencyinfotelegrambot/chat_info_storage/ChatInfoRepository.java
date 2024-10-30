@@ -17,7 +17,8 @@ import static com.mongodb.client.model.Filters.gt;
 public class ChatInfoRepository {
 
     private static final String USERS_DB = "users_db";
-    public static final String USERS_CONVERSIONS_COLLECTION = "users_conversions";
+    private static final String USERS_CONVERSIONS_COLLECTION = "users_conversions";
+
     private final MongoClient mongoClient;
 
     public ChatInfoRepository(MongoClient mongoClient) {
@@ -31,7 +32,7 @@ public class ChatInfoRepository {
         UpdateOptions updateOptions = new UpdateOptions();
         updateOptions.upsert(true);
 
-        Bson filter = eq("id", chatInfo.getId());
+        Bson filter = eq("_id", chatInfo.getId());
         Bson update = Updates.combine(
             Updates.set("current", chatInfo.getCurrent()),
             Updates.set("target", chatInfo.getTarget())

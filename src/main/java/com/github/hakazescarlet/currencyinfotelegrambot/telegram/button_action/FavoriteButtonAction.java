@@ -1,22 +1,24 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram.button_action;
 
-import com.github.hakazescarlet.currencyinfotelegrambot.chat_info_storage.ChatInfoRepository;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_info_storage.FavoriteInfoRepository;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
+import net.fellbaum.jemoji.Emojis;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class FavoriteAction implements ButtonAction {
+public class FavoriteButtonAction implements ButtonAction {
 
-    private final ChatInfoRepository chatInfoRepository;
+    private final FavoriteInfoRepository favoriteInfoRepository;
     private final CurrencyConverter currencyConverter;
 
-    public FavoriteAction(ChatInfoRepository chatInfoRepository, CurrencyConverter currencyConverter) {
-        this.chatInfoRepository = chatInfoRepository;
+    public FavoriteButtonAction(FavoriteInfoRepository favoriteInfoRepository, CurrencyConverter currencyConverter) {
+        this.favoriteInfoRepository = favoriteInfoRepository;
         this.currencyConverter = currencyConverter;
     }
 
@@ -35,5 +37,19 @@ public class FavoriteAction implements ButtonAction {
     public void doAction(Message message, Map<Long, ChatState> chatStates, Consumer<SendMessage> botApiMethod) {
         Long chatId = message.getChatId();
 
+        String action = chatStates.get(chatId).getAction();
+        String current = chatStates.get(chatId).getCurrent();
+        String target = chatStates.get(chatId).getTarget();
+
+        if (
+            ButtonTitle.CONVERT.getTitle().equals(action)
+            || ButtonTitle.RETRY_LAST.getTitle().equals(action)
+            && current != null
+            && target != null
+        ) {
+            InlineKeyboardButton.builder()
+                .text(ButtonTitle.FAVORITE.getTitle() + Emojis.STAR.getUnicode())
+                .build();
+        }
     }
 }

@@ -21,10 +21,12 @@ public class ConvertButtonAction implements ButtonAction {
 
     private final CurrencyConverter currencyConverter;
     private final ChatInfoRepository chatInfoRepository;
+    private final FavoriteButtonAction favoriteButtonAction;
 
-    public ConvertButtonAction(CurrencyConverter currencyConverter, ChatInfoRepository chatInfoRepository) {
+    public ConvertButtonAction(CurrencyConverter currencyConverter, ChatInfoRepository chatInfoRepository, FavoriteButtonAction favoriteButtonAction) {
         this.currencyConverter = currencyConverter;
         this.chatInfoRepository = chatInfoRepository;
+        this.favoriteButtonAction = favoriteButtonAction;
     }
 
     @Override
@@ -85,8 +87,9 @@ public class ConvertButtonAction implements ButtonAction {
 
             botApiMethod.accept(sendMessage);
             saveChatInfo(chatState);
-            chatStates.remove(chatId);
 
+
+//            chatStates.remove(chatId);
             return;
         }
     }
