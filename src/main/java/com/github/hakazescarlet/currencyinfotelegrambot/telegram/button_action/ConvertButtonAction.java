@@ -21,12 +21,10 @@ public class ConvertButtonAction implements ButtonAction {
 
     private final CurrencyConverter currencyConverter;
     private final ChatInfoRepository chatInfoRepository;
-    private final FavoriteButtonAction favoriteButtonAction;
 
-    public ConvertButtonAction(CurrencyConverter currencyConverter, ChatInfoRepository chatInfoRepository, FavoriteButtonAction favoriteButtonAction) {
+    public ConvertButtonAction(CurrencyConverter currencyConverter, ChatInfoRepository chatInfoRepository) {
         this.currencyConverter = currencyConverter;
         this.chatInfoRepository = chatInfoRepository;
-        this.favoriteButtonAction = favoriteButtonAction;
     }
 
     @Override

@@ -13,7 +13,6 @@ public class TelegramBotService {
         TelegramBotsApi telegramBotsApi,
         CurrencyConversionBot currencyConversionBot
     ) throws TelegramApiException {
-
         telegramBotsApi.registerBot(currencyConversionBot);
     }
 }
