@@ -17,7 +17,6 @@ import java.util.function.Consumer;
 public class DonateButtonAction implements ButtonAction {
 
     private final DonateQrCodeHolder donateQrCodeHolder;
-
     private final String walletLink = "TNbd9sLFerZfyH9P7FfoUsAkD6f5HTTUqj";
 
     public DonateButtonAction(DonateQrCodeHolder donateQrCodeHolder) {
