@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class FavoriteButtonAction implements ButtonAction {
+public class FavoriteButtonAction implements ButtonAction<SendMessage> {
 
     private final FavoriteInfoRepository favoriteInfoRepository;
     private final CurrencyConverter currencyConverter;

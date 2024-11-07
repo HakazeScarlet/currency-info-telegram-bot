@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @Component
-public class HelpButtonAction implements ButtonAction {
+public class HelpButtonAction implements ButtonAction<SendMessage> {
 
     private final InfoMessageHolder infoMessageHolder;
 

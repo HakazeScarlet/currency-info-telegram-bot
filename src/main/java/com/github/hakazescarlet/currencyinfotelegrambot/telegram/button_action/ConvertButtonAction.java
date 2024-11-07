@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @Component
-public class ConvertButtonAction implements ButtonAction {
+public class ConvertButtonAction implements ButtonAction<SendMessage> {
 
     private static final String SEPARATOR = "\s";
 
@@ -85,9 +85,7 @@ public class ConvertButtonAction implements ButtonAction {
 
             botApiMethod.accept(sendMessage);
             saveChatInfo(chatState);
-
-
-//            chatStates.remove(chatId);
+            chatStates.remove(chatId);
             return;
         }
     }

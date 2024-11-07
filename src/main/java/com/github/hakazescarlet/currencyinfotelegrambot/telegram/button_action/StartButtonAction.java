@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @Component
-public class StartButtonAction implements ButtonAction {
+public class StartButtonAction implements ButtonAction<SendMessage> {
 
     private final ButtonCreator buttonCreator;
     private final InfoMessageHolder infoMessageHolder;

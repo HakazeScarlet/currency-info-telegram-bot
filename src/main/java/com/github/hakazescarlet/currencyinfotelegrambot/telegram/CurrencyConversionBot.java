@@ -5,6 +5,8 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -40,8 +42,13 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
             })
             .orElseThrow(() -> new NoneButtonActionMatchesException())
             .doAction(message, chatStates, (sendMessage) -> {
+
                 try {
-                    super.sendApiMethod(sendMessage);
+                    if (sendMessage instanceof SendMessage) {
+                        super.sendApiMethod((SendMessage) sendMessage);
+                    } else if (sendMessage instanceof SendPhoto) {
+                        super.execute((SendPhoto) sendMessage);
+                    }
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }

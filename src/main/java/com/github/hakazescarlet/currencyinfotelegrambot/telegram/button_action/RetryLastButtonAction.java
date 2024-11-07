@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @Component
-public class RetryLastButtonAction implements ButtonAction {
+public class RetryLastButtonAction implements ButtonAction<SendMessage> {
 
     private final ChatInfoRepository chatInfoRepository;
     private final CurrencyConverter currencyConverter;
