@@ -5,6 +5,7 @@ import com.github.hakazescarlet.currencyinfotelegrambot.chat_info_storage.Curren
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
+import com.github.hakazescarlet.currencyinfotelegrambot.telegram.MessagesHolder;
 import net.fellbaum.jemoji.Emojis;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -16,6 +17,8 @@ import java.util.function.Consumer;
 
 @Component
 public class RetryLastButtonAction implements ButtonAction<SendMessage> {
+
+    private static final String SEPARATOR = "\s";
 
     private final ChatInfoRepository chatInfoRepository;
     private final CurrencyConverter currencyConverter;
@@ -50,19 +53,22 @@ public class RetryLastButtonAction implements ButtonAction<SendMessage> {
 
                 chatStates.put(chatId, chatState);
 
-                SendMessage sendMessage = new SendMessage();
-                sendMessage.setChatId(chatId);
-                sendMessage.setText("Amount of " +
-                    currencyHolder.getCurrent() +
-                    " for conversion to " + currencyHolder.getTarget());
+                SendMessage sendMessage = SendMessage.builder()
+                    .chatId(chatId)
+                    .text(String.format(
+                        "%s %s %s %s",
+                        "Amount of", currencyHolder.getCurrent(), "for conversion to", currencyHolder.getTarget()))
+                    .build();
 
                 botApiMethod.accept(sendMessage);
                 return;
             } else {
-                SendMessage sendMessage = new SendMessage();
-                sendMessage.setChatId(chatId);
-                sendMessage.setText("You have not had any conversion operations yet. " +
-                    "Please perform at least one operation using the \"Convert\" button.");
+                SendMessage sendMessage = SendMessage.builder()
+                    .chatId(chatId)
+                    .text(MessagesHolder.FAILED_RETRY_MESSAGE)
+                    .build();
+
+                botApiMethod.accept(sendMessage);
                 return;
             }
         } else if (chatStates.containsKey(chatId) && chatStates.get(chatId).getAction().equals(ButtonTitle.RETRY_LAST.getTitle())) {
@@ -76,11 +82,11 @@ public class RetryLastButtonAction implements ButtonAction<SendMessage> {
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(chatId);
             sendMessage.setText(
-                amount +
-                " " + current +
-                " " + Emojis.RIGHT_ARROW.getUnicode() +
-                " " + target +
-                " " + converted
+                amount + SEPARATOR
+                + current + SEPARATOR
+                + Emojis.RIGHT_ARROW.getUnicode() + SEPARATOR
+                + target + SEPARATOR
+                + converted
             );
 
             botApiMethod.accept(sendMessage);

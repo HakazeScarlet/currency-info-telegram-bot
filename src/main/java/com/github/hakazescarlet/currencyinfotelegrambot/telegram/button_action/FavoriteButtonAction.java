@@ -4,10 +4,8 @@ import com.github.hakazescarlet.currencyinfotelegrambot.chat_info_storage.Favori
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
-import net.fellbaum.jemoji.Emojis;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -47,9 +45,7 @@ public class FavoriteButtonAction implements ButtonAction<SendMessage> {
             && current != null
             && target != null
         ) {
-            InlineKeyboardButton.builder()
-                .text(ButtonTitle.FAVORITE.getTitle() + Emojis.STAR.getUnicode())
-                .build();
+
         }
     }
 }

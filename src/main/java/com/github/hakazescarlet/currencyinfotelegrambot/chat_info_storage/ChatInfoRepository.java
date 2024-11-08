@@ -44,13 +44,13 @@ public class ChatInfoRepository {
     public CurrencyHolder retrieve(Long chatId) {
         MongoDatabase database = mongoClient.getDatabase(USERS_DB);
         MongoCollection<Document> chatInfoCollection = database.getCollection(USERS_CONVERSIONS_COLLECTION);
-        chatInfoCollection.find(eq("id", chatId));
+        chatInfoCollection.find(eq("_id", chatId));
 
         Bson userCurrents = Projections.fields(
             Projections.include("current", "target"));
-        Projections.exclude("id");
+        Projections.exclude("_id");
 
-        Document document = chatInfoCollection.find(gt("id", chatId))
+        Document document = chatInfoCollection.find(gt("_id", chatId))
             .projection(userCurrents)
             .first();
 

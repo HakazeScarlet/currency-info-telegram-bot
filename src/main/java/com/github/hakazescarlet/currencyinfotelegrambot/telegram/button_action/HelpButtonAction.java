@@ -2,7 +2,7 @@ package com.github.hakazescarlet.currencyinfotelegrambot.telegram.button_action;
 
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
-import com.github.hakazescarlet.currencyinfotelegrambot.telegram.InfoMessageHolder;
+import com.github.hakazescarlet.currencyinfotelegrambot.telegram.MessagesHolder;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -13,10 +13,10 @@ import java.util.function.Consumer;
 @Component
 public class HelpButtonAction implements ButtonAction<SendMessage> {
 
-    private final InfoMessageHolder infoMessageHolder;
+    private final MessagesHolder messagesHolder;
 
-    public HelpButtonAction(InfoMessageHolder infoMessageHolder) {
-        this.infoMessageHolder = infoMessageHolder;
+    public HelpButtonAction(MessagesHolder messagesHolder) {
+        this.messagesHolder = messagesHolder;
     }
 
     @Override
@@ -26,9 +26,11 @@ public class HelpButtonAction implements ButtonAction<SendMessage> {
 
     @Override
     public void doAction(Message message, Map<Long, ChatState> chatStates, Consumer<SendMessage> botApiMethod) {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(message.getChatId());
-        sendMessage.setText(infoMessageHolder.get());
+        SendMessage sendMessage = SendMessage.builder()
+            .chatId(message.getChatId())
+            .text(messagesHolder.get())
+            .build();
+
         botApiMethod.accept(sendMessage);
     }
 }

@@ -5,6 +5,7 @@ import com.github.hakazescarlet.currencyinfotelegrambot.chat_info_storage.ChatIn
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
+import com.github.hakazescarlet.currencyinfotelegrambot.telegram.MessagesHolder;
 import net.fellbaum.jemoji.Emojis;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -46,14 +47,10 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
 
             chatStates.put(chatId, actionChatState);
 
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.setChatId(chatId);
-            sendMessage.setText(
-                "Add currencies to conversion and amount "
-                + "\nExample "
-                + Emojis.RIGHT_ARROW.getUnicode()
-                + " USD EUR 1000");
-
+            SendMessage sendMessage = SendMessage.builder()
+                .chatId(chatId)
+                .text(MessagesHolder.CONVERT_MESSAGE_EXAMPLE)
+                .build();
             botApiMethod.accept(sendMessage);
 
             return;
@@ -62,26 +59,26 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
         ChatState chatState = chatStates.get(chatId);
 
         if (chatState != null && ButtonTitle.CONVERT.getTitle().equals(chatState.getAction())) {
-            String convertMessage = message.getText();
-            String[] currencies = convertMessage.split(SEPARATOR);
+            String[] currencies = message.getText().split(SEPARATOR);
 
             chatState.setCurrent(currencies[0].toUpperCase());
             chatState.setTarget(currencies[1].toUpperCase());
             chatState.setAmount(Math.abs(Double.parseDouble(currencies[2])));
 
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.setChatId(chatId);
             String current = chatState.getCurrent();
             String target = chatState.getTarget();
             Double amount = chatState.getAmount();
             BigDecimal converted = currencyConverter.convert(current, target, BigDecimal.valueOf(amount));
-            sendMessage.setText(
-                amount + SEPARATOR
-                + current + SEPARATOR
-                + Emojis.RIGHT_ARROW.getUnicode() + SEPARATOR
-                + converted + SEPARATOR
-                + target
-            );
+
+            SendMessage sendMessage = SendMessage.builder()
+                .chatId(chatId)
+                .text(
+                    amount + SEPARATOR
+                    + current + SEPARATOR
+                    + Emojis.RIGHT_ARROW.getUnicode() + SEPARATOR
+                    + converted + SEPARATOR
+                    + target)
+                .build();
 
             botApiMethod.accept(sendMessage);
             saveChatInfo(chatState);
