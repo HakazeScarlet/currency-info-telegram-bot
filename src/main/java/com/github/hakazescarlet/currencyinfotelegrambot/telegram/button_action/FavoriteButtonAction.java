@@ -47,9 +47,7 @@ public class FavoriteButtonAction implements ButtonAction<SendMessage> {
             && current != null
             && target != null
         ) {
-            InlineKeyboardButton.builder()
-                .text(ButtonTitle.FAVORITE.getTitle() + Emojis.STAR.getUnicode())
-                .build();
+
         }
     }
 }

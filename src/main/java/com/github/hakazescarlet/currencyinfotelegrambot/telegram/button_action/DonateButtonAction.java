@@ -8,10 +8,9 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -24,12 +23,11 @@ public class DonateButtonAction implements ButtonAction<SendPhoto> {
 
     public DonateButtonAction() {
         try {
-            donateQrCode = ImageIO.read(getClass().getResource("images/qr_wallet.jpg"));
-//            URI uri = getClass().getResource("/images/donate.png").toURI();
-//            donateQrCode =
-//        } catch (URISyntaxException e) {
-//            throw new RuntimeException(e);
-        } catch (IOException e) {
+            URL resource = getClass().getResource("/images/qr_wallet.jpg");
+            this.donateQrCode = new File(resource.toURI());
+            BufferedImage bufferedImage = ImageIO.read(resource);
+            ImageIO.write(bufferedImage, "jpg", donateQrCode);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

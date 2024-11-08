@@ -19,11 +19,11 @@ import java.util.Map;
 public class CurrencyConversionBot extends TelegramLongPollingBot {
 
     private final Map<Long, ChatState> chatStates = new HashMap<>();
-    private final List<ButtonAction> buttonActions;
+    private final List<ButtonAction<?>> buttonActions;
 
     public CurrencyConversionBot(
         @Value("${telegram.bot.token}") String botToken,
-        List<ButtonAction> buttonActions
+        List<ButtonAction<?>> buttonActions
     ) {
         super(botToken);
         this.buttonActions = buttonActions;
@@ -60,14 +60,14 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
         return "Scarlet_Currency_Converter_Bot";
     }
 
-    private final class TwoAndMoreButtonActionMatchesException extends RuntimeException {
+    private static final class TwoAndMoreButtonActionMatchesException extends RuntimeException {
 
         public TwoAndMoreButtonActionMatchesException() {
             super();
         }
     }
 
-    private final class NoneButtonActionMatchesException extends RuntimeException {
+    private static final class NoneButtonActionMatchesException extends RuntimeException {
 
         public NoneButtonActionMatchesException() {
             super();

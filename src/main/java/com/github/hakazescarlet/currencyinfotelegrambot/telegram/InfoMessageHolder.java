@@ -24,7 +24,7 @@ public final class InfoMessageHolder {
         return infoMessage;
     }
 
-    private final class InfoMessageReadingException extends RuntimeException {
+    private static final class InfoMessageReadingException extends RuntimeException {
 
         public InfoMessageReadingException(String message, Exception e) {
             super(message, e);
