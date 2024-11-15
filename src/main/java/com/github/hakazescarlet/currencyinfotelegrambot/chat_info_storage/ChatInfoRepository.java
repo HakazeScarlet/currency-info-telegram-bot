@@ -18,7 +18,6 @@ public class ChatInfoRepository {
 
     private static final String USERS_DB = "users_db";
     private static final String USERS_CONVERSIONS_COLLECTION = "users_conversions";
-
     private final MongoClient mongoClient;
 
     public ChatInfoRepository(MongoClient mongoClient) {
@@ -32,7 +31,7 @@ public class ChatInfoRepository {
         UpdateOptions updateOptions = new UpdateOptions();
         updateOptions.upsert(true);
 
-        Bson filter = eq("_id", chatInfo.getId());
+        Bson filter = eq("id", chatInfo.getId());
         Bson update = Updates.combine(
             Updates.set("current", chatInfo.getCurrent()),
             Updates.set("target", chatInfo.getTarget())
@@ -44,13 +43,13 @@ public class ChatInfoRepository {
     public CurrencyHolder retrieve(Long chatId) {
         MongoDatabase database = mongoClient.getDatabase(USERS_DB);
         MongoCollection<Document> chatInfoCollection = database.getCollection(USERS_CONVERSIONS_COLLECTION);
-        chatInfoCollection.find(eq("_id", chatId));
+        chatInfoCollection.find(eq("id", chatId));
 
         Bson userCurrents = Projections.fields(
             Projections.include("current", "target"));
-        Projections.exclude("_id");
+        Projections.exclude("id");
 
-        Document document = chatInfoCollection.find(gt("_id", chatId))
+        Document document = chatInfoCollection.find(gt("id", chatId))
             .projection(userCurrents)
             .first();
 
