@@ -1,1 +1,2 @@
-'Times New Roman', Times, serif
+Hello! This currency converter will help you quickly and accurately get information about the current exchange rate.
+It can also be conveniently customized for yourself

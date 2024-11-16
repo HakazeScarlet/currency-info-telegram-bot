@@ -2,6 +2,7 @@ package com.github.hakazescarlet.currencyinfotelegrambot.telegram.button_action;
 
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
+import com.github.hakazescarlet.currencyinfotelegrambot.telegram.MessagesHolder;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -17,11 +18,6 @@ import java.util.function.Consumer;
 
 @Component
 public class DonateButtonAction implements ButtonAction<SendPhoto> {
-
-    private static final String WALLET_LINK = "TNbd9sLFerZfyH9P7FfoUsAkD6f5HTTUqj";
-    private static final String MESSAGE_CAPTION = "You can help our project by donating to the specified link to the crypto wallet on the TRC-20 network"
-        + "\n" + WALLET_LINK
-        + "\n" + "or use QR-code :) ";
 
     private final File donateQrCode;
 
@@ -45,11 +41,12 @@ public class DonateButtonAction implements ButtonAction<SendPhoto> {
     public void doAction(Message message, Map<Long, ChatState> chatStates, Consumer<SendPhoto> botApiMethod) {
         Long chatId = message.getChatId();
 
-        SendPhoto sendPhoto = new SendPhoto();
-        sendPhoto.setChatId(chatId);
-        sendPhoto.setParseMode(ParseMode.HTML);
-        sendPhoto.setCaption(MESSAGE_CAPTION);
-        sendPhoto.setPhoto(new InputFile(donateQrCode));
+        SendPhoto sendPhoto = SendPhoto.builder()
+            .chatId(chatId)
+            .caption(MessagesHolder.MESSAGE_CAPTION)
+            .photo(new InputFile(donateQrCode))
+            .build();
+
         botApiMethod.accept(sendPhoto);
     }
 }

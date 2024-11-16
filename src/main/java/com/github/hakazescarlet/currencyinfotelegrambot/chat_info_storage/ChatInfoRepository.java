@@ -3,6 +3,7 @@ package com.github.hakazescarlet.currencyinfotelegrambot.chat_info_storage;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.gt;
+import static com.mongodb.client.model.Projections.*;
 
 @Repository
 public class ChatInfoRepository {
@@ -43,14 +45,13 @@ public class ChatInfoRepository {
     public CurrencyHolder retrieve(Long chatId) {
         MongoDatabase database = mongoClient.getDatabase(USERS_DB);
         MongoCollection<Document> chatInfoCollection = database.getCollection(USERS_CONVERSIONS_COLLECTION);
-        chatInfoCollection.find(eq("id", chatId));
 
-        Bson userCurrents = Projections.fields(
-            Projections.include("current", "target"));
-        Projections.exclude("id");
+//        Bson searchFilter = Filters.and(Filters.eq("id", chatId));
+        Bson searchFilter = Filters.eq("id", chatId);
 
-        Document document = chatInfoCollection.find(gt("id", chatId))
-            .projection(userCurrents)
+        Bson fields = fields(include("current", "target"), excludeId());
+        Document document = chatInfoCollection.find(searchFilter)
+            .projection(fields)
             .first();
 
         if (document == null) {

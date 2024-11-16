@@ -19,6 +19,10 @@ public final class MessagesHolder {
     public static final String FAILED_RETRY_MESSAGE = "You have not had any conversion operations yet. " +
         "Please perform at least one operation using the \"Convert\" button.";
 
+    public static final String MESSAGE_CAPTION = "You can help our project by donating to the QR-code to the crypto wallet "
+        + "\n" + "or use specified link on the TRC-20 network :) "
+        + "\n" + "TNbd9sLFerZfyH9P7FfoUsAkD6f5HTTUqj";
+
     private final String INFO_MESSAGE;
 
     public MessagesHolder(@Value("classpath:infoMessage.txt") Resource resource) {
