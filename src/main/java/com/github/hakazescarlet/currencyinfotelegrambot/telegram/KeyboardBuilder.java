@@ -3,7 +3,9 @@ package com.github.hakazescarlet.currencyinfotelegrambot.telegram;
 import net.fellbaum.jemoji.Emojis;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -58,8 +60,24 @@ public class KeyboardBuilder {
         return sendMessage;
     }
 
-    public SendMessage createInnerFavouriteButton(SendMessage sendMessage) {
-        // TODO: use https://habr.com/ru/articles/746370/
-        return null;
+    public SendMessage createInnerFavouriteButton(long chatId) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(chatId);
+
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        List<InlineKeyboardButton> firstRow = new ArrayList<>();
+
+        InlineKeyboardButton favouriteButton = new InlineKeyboardButton();
+        favouriteButton.setText(Emojis.STAR.getUnicode() + " Add to Favorite");
+        favouriteButton.setCallbackData(ButtonTitle.FAVORITE.getTitle());
+
+        firstRow.add(favouriteButton);
+        keyboard.add(firstRow);
+
+        inlineKeyboardMarkup.setKeyboard(keyboard);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        return sendMessage;
     }
 }

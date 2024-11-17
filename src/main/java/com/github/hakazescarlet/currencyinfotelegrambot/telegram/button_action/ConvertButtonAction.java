@@ -5,6 +5,7 @@ import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.RetryLa
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
+import com.github.hakazescarlet.currencyinfotelegrambot.telegram.KeyboardBuilder;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.MessagesHolder;
 import net.fellbaum.jemoji.Emojis;
 import org.springframework.stereotype.Component;
@@ -22,10 +23,12 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
 
     private final CurrencyConverter currencyConverter;
     private final RetryLastInfoRepository retryLastInfoRepository;
+    private final KeyboardBuilder keyboardBuilder;
 
-    public ConvertButtonAction(CurrencyConverter currencyConverter, RetryLastInfoRepository retryLastInfoRepository) {
+    public ConvertButtonAction(CurrencyConverter currencyConverter, RetryLastInfoRepository retryLastInfoRepository, KeyboardBuilder keyboardBuilder) {
         this.currencyConverter = currencyConverter;
         this.retryLastInfoRepository = retryLastInfoRepository;
+        this.keyboardBuilder = keyboardBuilder;
     }
 
     @Override
@@ -71,6 +74,7 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
             Double amount = chatState.getAmount();
             BigDecimal converted = currencyConverter.convert(current, target, BigDecimal.valueOf(amount));
 
+            keyboardBuilder.createInnerFavouriteButton(chatId);
             SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId)
                 .text(amount + SEPARATOR
@@ -79,7 +83,6 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
                     + converted + SEPARATOR + target)
                 .build();
 
-            // TODO: call method for generate/create button to saving favourite pair
             botApiMethod.accept(sendMessage);
 
             saveChatInfo(chatState);
