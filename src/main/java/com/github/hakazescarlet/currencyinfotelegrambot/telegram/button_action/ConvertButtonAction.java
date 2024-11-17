@@ -1,7 +1,7 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram.button_action;
 
-import com.github.hakazescarlet.currencyinfotelegrambot.chat_info_storage.ChatInfo;
-import com.github.hakazescarlet.currencyinfotelegrambot.chat_info_storage.ChatInfoRepository;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.ChatInfo;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.RetryLastInfoRepository;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
@@ -21,11 +21,11 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
     private static final String SEPARATOR = "\s";
 
     private final CurrencyConverter currencyConverter;
-    private final ChatInfoRepository chatInfoRepository;
+    private final RetryLastInfoRepository retryLastInfoRepository;
 
-    public ConvertButtonAction(CurrencyConverter currencyConverter, ChatInfoRepository chatInfoRepository) {
+    public ConvertButtonAction(CurrencyConverter currencyConverter, RetryLastInfoRepository retryLastInfoRepository) {
         this.currencyConverter = currencyConverter;
-        this.chatInfoRepository = chatInfoRepository;
+        this.retryLastInfoRepository = retryLastInfoRepository;
     }
 
     @Override
@@ -58,6 +58,7 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
 
         ChatState chatState = chatStates.get(chatId);
 
+        // TODO: есть ли смысл в этой проверке (во второй ее части) если есть проверка в методе isApplicable() выше
         if (chatState != null && ButtonTitle.CONVERT.getTitle().equals(chatState.getAction())) {
             String[] currencies = message.getText().split(SEPARATOR);
 
@@ -72,23 +73,22 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
 
             SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId)
-                .text(
-                    amount + SEPARATOR
+                .text(amount + SEPARATOR
                     + current + SEPARATOR
                     + Emojis.RIGHT_ARROW.getUnicode() + SEPARATOR
-                    + converted + SEPARATOR
-                    + target)
+                    + converted + SEPARATOR + target)
                 .build();
 
+            // TODO: call method for generate/create button to saving favourite pair
             botApiMethod.accept(sendMessage);
+
             saveChatInfo(chatState);
+
             chatStates.remove(chatId);
-            return;
         }
     }
 
     private void saveChatInfo(ChatState chatState) {
-        ChatInfo chatInfo = new ChatInfo(chatState.getChatId(), chatState.getCurrent(), chatState.getTarget());
-        chatInfoRepository.save(chatInfo);
+        retryLastInfoRepository.save(new ChatInfo(chatState.getChatId(), chatState.getCurrent(), chatState.getTarget()));
     }
 }

@@ -1,6 +1,6 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram.button_action;
 
-import com.github.hakazescarlet.currencyinfotelegrambot.chat_info_storage.FavoriteInfoRepository;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.FavoriteInfoRepository;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
@@ -33,19 +33,6 @@ public class FavoriteButtonAction implements ButtonAction<SendMessage> {
 
     @Override
     public void doAction(Message message, Map<Long, ChatState> chatStates, Consumer<SendMessage> botApiMethod) {
-        Long chatId = message.getChatId();
 
-        String action = chatStates.get(chatId).getAction();
-        String current = chatStates.get(chatId).getCurrent();
-        String target = chatStates.get(chatId).getTarget();
-
-        if (
-            ButtonTitle.CONVERT.getTitle().equals(action)
-            || ButtonTitle.RETRY_LAST.getTitle().equals(action)
-            && current != null
-            && target != null
-        ) {
-
-        }
     }
 }

@@ -1,7 +1,7 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram.button_action;
 
-import com.github.hakazescarlet.currencyinfotelegrambot.chat_info_storage.ChatInfoRepository;
-import com.github.hakazescarlet.currencyinfotelegrambot.chat_info_storage.CurrencyHolder;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.CurrencyHolder;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.RetryLastInfoRepository;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
@@ -20,11 +20,11 @@ public class RetryLastButtonAction implements ButtonAction<SendMessage> {
 
     private static final String SEPARATOR = "\s";
 
-    private final ChatInfoRepository chatInfoRepository;
+    private final RetryLastInfoRepository retryLastInfoRepository;
     private final CurrencyConverter currencyConverter;
 
-    public RetryLastButtonAction(ChatInfoRepository chatInfoRepository, CurrencyConverter currencyConverter) {
-        this.chatInfoRepository = chatInfoRepository;
+    public RetryLastButtonAction(RetryLastInfoRepository retryLastInfoRepository, CurrencyConverter currencyConverter) {
+        this.retryLastInfoRepository = retryLastInfoRepository;
         this.currencyConverter = currencyConverter;
     }
 
@@ -42,7 +42,7 @@ public class RetryLastButtonAction implements ButtonAction<SendMessage> {
         Long chatId = message.getChatId();
 
         if (!chatStates.containsKey(chatId)) {
-            CurrencyHolder currencyHolder = chatInfoRepository.retrieve(chatId);
+            CurrencyHolder currencyHolder = retryLastInfoRepository.retrieve(chatId);
 
             if (currencyHolder != null) {
                 ChatState chatState = new ChatState();

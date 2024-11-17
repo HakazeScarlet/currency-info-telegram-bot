@@ -11,11 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ButtonCreator {
+public class KeyboardBuilder {
 
     // TODO: refactor this part
-    // TODO: add history & fast convert buttons
-    public SendMessage create(long chatId) {
+    public SendMessage createReplyKeyboard(long chatId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
 
@@ -57,5 +56,10 @@ public class ButtonCreator {
         replyKeyboardMarkup.setKeyboard(keyboard);
         sendMessage.setReplyMarkup(replyKeyboardMarkup);
         return sendMessage;
+    }
+
+    public SendMessage createInnerFavouriteButton(SendMessage sendMessage) {
+        // TODO: use https://habr.com/ru/articles/746370/
+        return null;
     }
 }

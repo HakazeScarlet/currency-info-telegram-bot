@@ -1,6 +1,6 @@
-package com.github.hakazescarlet.currencyinfotelegrambot.chat_info_storage;
+package com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage;
 
-public class CurrencyHolder {
+public class CurrencyHolder {   //TODO: rename
 
     private final String current;
     private final String target;
