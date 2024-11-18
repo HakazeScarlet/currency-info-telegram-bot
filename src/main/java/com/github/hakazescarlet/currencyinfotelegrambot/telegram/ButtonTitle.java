@@ -9,7 +9,8 @@ public enum ButtonTitle {
     DONATE ("Donate"),
     HELP ("Help"),
     FEEDBACK ("Feedback"),
-    CANCEL ("Cancel");
+    CANCEL ("Cancel"),
+    ADD_TO_FAVOURITE ("Add to Favourite");
 
     private final String title;
 

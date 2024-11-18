@@ -7,9 +7,11 @@ import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.springframework.stereotype.Repository;
 
 import static com.mongodb.client.model.Filters.eq;
 
+@Repository
 public class FavoriteInfoRepository {
 
     private static final String USERS_DB = "users_db";  //TODO: rename

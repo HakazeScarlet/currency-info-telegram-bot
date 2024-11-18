@@ -28,28 +28,22 @@ public class KeyboardBuilder {
         List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow keyboardFirstRow = new KeyboardRow();
-        keyboardFirstRow.add(new KeyboardButton(ButtonTitle.CONVERT.getTitle()
-            + Emojis.CURRENCY_EXCHANGE.getUnicode()));
-        keyboardFirstRow.add(new KeyboardButton(ButtonTitle.FAVORITE.getTitle()
-            + Emojis.STAR.getUnicode()));
+        keyboardFirstRow.add(new KeyboardButton(Emojis.CURRENCY_EXCHANGE.getUnicode() + ButtonTitle.CONVERT.getTitle()));
+        keyboardFirstRow.add(new KeyboardButton(Emojis.STAR.getUnicode() + ButtonTitle.FAVORITE.getTitle()));
 
         KeyboardRow keyboardSecondRow = new KeyboardRow();
-        keyboardSecondRow.add(new KeyboardButton(ButtonTitle.RETRY_LAST.getTitle()
-            + Emojis.RECYCLING_SYMBOL_UNQUALIFIED.getUnicode()));
-        keyboardSecondRow.add(new KeyboardButton(ButtonTitle.SWAP_CURRENT.getTitle()
-            + Emojis.CLOCKWISE_VERTICAL_ARROWS.getUnicode()));
+        keyboardSecondRow.add(new KeyboardButton(Emojis.RECYCLING_SYMBOL_UNQUALIFIED.getUnicode()
+            + ButtonTitle.RETRY_LAST.getTitle()));
+        keyboardSecondRow.add(new KeyboardButton(Emojis.CLOCKWISE_VERTICAL_ARROWS.getUnicode()
+            + ButtonTitle.SWAP_CURRENT.getTitle()));
 
         KeyboardRow keyboardThirdRow = new KeyboardRow();
-        keyboardThirdRow.add(new KeyboardButton(ButtonTitle.DONATE.getTitle()
-            + Emojis.MONEY_WITH_WINGS.getUnicode()));
-        keyboardThirdRow.add(new KeyboardButton(ButtonTitle.HELP.getTitle()
-            + Emojis.CLIPBOARD.getUnicode()));
-        keyboardThirdRow.add(new KeyboardButton(ButtonTitle.FEEDBACK.getTitle()
-            + Emojis.MEMO.getUnicode()));
+        keyboardThirdRow.add(new KeyboardButton(Emojis.MONEY_WITH_WINGS.getUnicode() + ButtonTitle.DONATE.getTitle()));
+        keyboardThirdRow.add(new KeyboardButton(Emojis.CLIPBOARD.getUnicode() + ButtonTitle.HELP.getTitle()));
+        keyboardThirdRow.add(new KeyboardButton(Emojis.MEMO.getUnicode() + ButtonTitle.FEEDBACK.getTitle()));
 
         KeyboardRow keyboardFourthRow = new KeyboardRow();
-        keyboardFourthRow.add(new KeyboardButton(ButtonTitle.CANCEL.getTitle()
-            + Emojis.PROHIBITED.getUnicode()));
+        keyboardFourthRow.add(new KeyboardButton(Emojis.PROHIBITED.getUnicode() + ButtonTitle.CANCEL.getTitle()));
 
         keyboard.add(keyboardFirstRow);
         keyboard.add(keyboardSecondRow);
@@ -60,22 +54,17 @@ public class KeyboardBuilder {
         return sendMessage;
     }
 
-    public SendMessage createInnerFavouriteButton(long chatId) {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(chatId);
-
+    public SendMessage createInnerFavouriteButton(SendMessage sendMessage) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         List<InlineKeyboardButton> firstRow = new ArrayList<>();
 
         InlineKeyboardButton favouriteButton = new InlineKeyboardButton();
-        favouriteButton.setText(Emojis.STAR.getUnicode() + " Add to Favorite");
-        favouriteButton.setCallbackData(ButtonTitle.FAVORITE.getTitle());
+        favouriteButton.setText(Emojis.STAR.getUnicode() + ButtonTitle.ADD_TO_FAVOURITE.getTitle());
+        favouriteButton.setCallbackData(ButtonTitle.ADD_TO_FAVOURITE.getTitle());
 
         firstRow.add(favouriteButton);
         keyboard.add(firstRow);
-
         inlineKeyboardMarkup.setKeyboard(keyboard);
         sendMessage.setReplyMarkup(inlineKeyboardMarkup);
         return sendMessage;

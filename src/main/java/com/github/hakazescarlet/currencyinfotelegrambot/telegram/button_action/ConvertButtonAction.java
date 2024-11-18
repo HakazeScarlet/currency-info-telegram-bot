@@ -74,7 +74,6 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
             Double amount = chatState.getAmount();
             BigDecimal converted = currencyConverter.convert(current, target, BigDecimal.valueOf(amount));
 
-            keyboardBuilder.createInnerFavouriteButton(chatId);
             SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId)
                 .text(amount + SEPARATOR
@@ -83,10 +82,8 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
                     + converted + SEPARATOR + target)
                 .build();
 
-            botApiMethod.accept(sendMessage);
-
+            botApiMethod.accept(keyboardBuilder.createInnerFavouriteButton(sendMessage));
             saveChatInfo(chatState);
-
             chatStates.remove(chatId);
         }
     }
