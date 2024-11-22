@@ -10,7 +10,7 @@ public enum ButtonTitle {
     HELP ("Help"),
     FEEDBACK ("Feedback"),
     CANCEL ("Cancel"),
-    ADD_TO_FAVOURITE ("Add to Favourite");
+    ADD_TO_FAVORITE("Add to Favorite");
 
     private final String title;
 

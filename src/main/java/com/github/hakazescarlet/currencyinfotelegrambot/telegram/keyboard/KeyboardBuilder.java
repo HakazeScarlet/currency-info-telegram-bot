@@ -1,5 +1,6 @@
-package com.github.hakazescarlet.currencyinfotelegrambot.telegram;
+package com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard;
 
+import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import net.fellbaum.jemoji.Emojis;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -59,11 +60,11 @@ public class KeyboardBuilder {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         List<InlineKeyboardButton> firstRow = new ArrayList<>();
 
-        InlineKeyboardButton favouriteButton = new InlineKeyboardButton();
-        favouriteButton.setText(Emojis.STAR.getUnicode() + ButtonTitle.ADD_TO_FAVOURITE.getTitle());
-        favouriteButton.setCallbackData(ButtonTitle.ADD_TO_FAVOURITE.getTitle());
+        InlineKeyboardButton favoriteButton = new InlineKeyboardButton();
+        favoriteButton.setText(Emojis.STAR.getUnicode() + ButtonTitle.ADD_TO_FAVORITE.getTitle());
+        favoriteButton.setCallbackData(ButtonTitle.ADD_TO_FAVORITE.getTitle());
 
-        firstRow.add(favouriteButton);
+        firstRow.add(favoriteButton);
         keyboard.add(firstRow);
         inlineKeyboardMarkup.setKeyboard(keyboard);
         sendMessage.setReplyMarkup(inlineKeyboardMarkup);

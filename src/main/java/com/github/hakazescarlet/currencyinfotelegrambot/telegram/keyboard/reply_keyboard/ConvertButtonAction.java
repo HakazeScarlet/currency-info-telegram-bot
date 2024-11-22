@@ -1,12 +1,12 @@
-package com.github.hakazescarlet.currencyinfotelegrambot.telegram.button_action;
+package com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.reply_keyboard;
 
 import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.ChatInfo;
 import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.RetryLastInfoRepository;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
-import com.github.hakazescarlet.currencyinfotelegrambot.telegram.KeyboardBuilder;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.MessagesHolder;
+import com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.KeyboardBuilder;
 import net.fellbaum.jemoji.Emojis;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

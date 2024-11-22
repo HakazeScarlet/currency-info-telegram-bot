@@ -1,4 +1,4 @@
-package com.github.hakazescarlet.currencyinfotelegrambot.telegram.button_action;
+package com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.reply_keyboard;
 
 import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.FavoriteInfoRepository;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;

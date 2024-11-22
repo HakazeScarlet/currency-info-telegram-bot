@@ -1,8 +1,8 @@
-package com.github.hakazescarlet.currencyinfotelegrambot.telegram.button_action;
+package com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.reply_keyboard;
 
-import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.MessagesHolder;
+import com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.KeyboardBuilder;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -11,25 +11,25 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @Component
-public class HelpButtonAction implements ButtonAction<SendMessage> {
+public class StartButtonAction implements ButtonAction<SendMessage> {
 
+    private final KeyboardBuilder keyboardBuilder;
     private final MessagesHolder messagesHolder;
 
-    public HelpButtonAction(MessagesHolder messagesHolder) {
+    public StartButtonAction(KeyboardBuilder keyboardBuilder, MessagesHolder messagesHolder) {
+        this.keyboardBuilder = keyboardBuilder;
         this.messagesHolder = messagesHolder;
     }
 
     @Override
     public boolean isApplicable(Message message, Map<Long, ChatState> chatStates) {
-        return message.getText().contains(ButtonTitle.HELP.getTitle());
+        return message.getText().equals("/start");
     }
 
     @Override
     public void doAction(Message message, Map<Long, ChatState> chatStates, Consumer<SendMessage> botApiMethod) {
-        SendMessage sendMessage = SendMessage.builder()
-            .chatId(message.getChatId())
-            .text(messagesHolder.get())
-            .build();
+        SendMessage sendMessage = keyboardBuilder.createReplyKeyboard(message.getChatId());
+        sendMessage.setText(messagesHolder.get());
 
         botApiMethod.accept(sendMessage);
     }
