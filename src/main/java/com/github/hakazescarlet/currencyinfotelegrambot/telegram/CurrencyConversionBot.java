@@ -36,14 +36,6 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
         this.addToFavouriteButtonAction = addToFavouriteButtonAction;
     }
 
-    public static void main(String[] args) {
-        String str = "1000.0 USD ➡️ 949.38 EUR";
-
-        String[] strings = str.split(SEPARATOR);
-
-        System.out.println(strings[4]);
-    }
-
     // TODO: add validation
     @SneakyThrows
     @Override
@@ -79,7 +71,6 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
                     }
                 });
         }
-
 
     }
 
