@@ -3,6 +3,8 @@ package com.github.hakazescarlet.currencyinfotelegrambot.telegram;
 import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.ChatInfo;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.inline_keyboard.AddToFavouriteButtonAction;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.reply_keyboard.ButtonAction;
+import com.github.hakazescarlet.currencyinfotelegrambot.util.CurrencyUtil;
+import com.github.hakazescarlet.currencyinfotelegrambot.util.PairHolder;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -19,8 +21,6 @@ import java.util.Map;
 
 @Component
 public class CurrencyConversionBot extends TelegramLongPollingBot {
-
-    private static final String SEPARATOR = "\s";
 
     private final Map<Long, ChatState> chatStates = new HashMap<>();
     private final List<ButtonAction<?>> buttonActions;
@@ -42,13 +42,13 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         if (update.hasCallbackQuery()) {
             Message message = (Message) update.getCallbackQuery().getMessage();
-            String[] favoriteCurrencies = message.getText().split(SEPARATOR);
 
-            ChatState chatState = new ChatState();
-            chatState.setCurrent(favoriteCurrencies[1].toUpperCase());
-            chatState.setTarget(favoriteCurrencies[4].toUpperCase());
+            PairHolder currencyPair = CurrencyUtil.parsePair(message.getText());
 
-            addToFavouriteButtonAction.saveToDb(new ChatInfo(message.getChatId(), chatState.getCurrent(), chatState.getTarget()));
+//            String current = favoriteCurrencies[1].toUpperCase();
+//            String target = favoriteCurrencies[4].toUpperCase();
+
+            addToFavouriteButtonAction.saveToDb(new ChatInfo(message.getChatId(), currencyPair.current(), currencyPair.target()));
         } else {
             Message message = update.getMessage();
 

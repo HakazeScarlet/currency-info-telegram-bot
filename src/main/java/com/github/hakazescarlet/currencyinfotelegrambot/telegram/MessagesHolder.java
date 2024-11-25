@@ -23,6 +23,8 @@ public final class MessagesHolder {
         + "\n" + "or use specified link on the TRC-20 network :) "
         + "\n" + "TNbd9sLFerZfyH9P7FfoUsAkD6f5HTTUqj";
 
+    public static final String FAVORITE_SAVING_MESSAGE = "Currencies added to your Favorite";
+
     private final String INFO_MESSAGE;
 
     public MessagesHolder(@Value("classpath:infoMessage.txt") Resource resource) {

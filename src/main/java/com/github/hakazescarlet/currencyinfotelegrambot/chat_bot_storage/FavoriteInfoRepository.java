@@ -15,10 +15,11 @@ import static com.mongodb.client.model.Filters.eq;
 public class FavoriteInfoRepository {
 
     private static final String USERS_DB = "users_db";  //TODO: rename
-    private static final String USERS_FAVORITE_COLLECTION = "users_favorite";
+    private static final String USERS_COLLECTION = "users_collection";
     private static final String ID_FIELD = "id";
-    private static final String CURRENT_FIELD = "current";
-    private static final String TARGET_FIELD = "target";
+    private static final String CURRENT_FIELD = "favorite_current";
+    private static final String TARGET_FIELD = "favorite_target";
+    private static final String DATE_TIME = "date_time";
 
     private final MongoClient mongoClient;
 
@@ -28,7 +29,7 @@ public class FavoriteInfoRepository {
 
     public void save(ChatInfo chatInfo) {
         MongoDatabase database = mongoClient.getDatabase(USERS_DB);
-        MongoCollection<Document> collection = database.getCollection(USERS_FAVORITE_COLLECTION);
+        MongoCollection<Document> collection = database.getCollection(USERS_COLLECTION);
 
         // TODO: сохранять данные в таблицу Favorite. Колонки id, current, target, date_time (найти тип данных для монго - DateTime)
         // TODO: делать проверку на количество валютных пар в таблице Favorite (5) перед записью новой
@@ -38,11 +39,13 @@ public class FavoriteInfoRepository {
         updateOptions.upsert(true);
 
         Bson filter = eq(ID_FIELD, chatInfo.getId());
-        Bson update = Updates.combine(
-            Updates.set(CURRENT_FIELD, chatInfo.getCurrent()),
-            Updates.set(TARGET_FIELD, chatInfo.getTarget())
-        );
+        Bson update = Updates.inc(ID_FIELD, 5);
+//        Bson update = Updates.combine(
+//            Updates.set(CURRENT_FIELD, chatInfo.getCurrent()),
+//            Updates.set(TARGET_FIELD, chatInfo.getTarget()),
+//            Updates.set(DATE_TIME, LocalDateTime.now())
+//        );
 
-        collection.updateOne(filter, update, updateOptions);
+//        collection.updateOne(filter, update, updateOptions);
     }
 }

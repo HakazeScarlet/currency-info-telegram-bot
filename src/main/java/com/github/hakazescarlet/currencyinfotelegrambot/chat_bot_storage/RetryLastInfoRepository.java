@@ -17,7 +17,7 @@ import static com.mongodb.client.model.Projections.*;
 public class RetryLastInfoRepository {
 
     private static final String USERS_DB = "users_db";  // TODO: rename
-    private static final String USERS_CONVERSIONS_COLLECTION = "users_conversions";
+    private static final String USERS_COLLECTION = "users_collection";
     private static final String ID_FIELD = "id";
     private static final String CURRENT_FIELD = "current";
     private static final String TARGET_FIELD = "target";
@@ -30,7 +30,7 @@ public class RetryLastInfoRepository {
 
     public void save(ChatInfo chatInfo) {
         MongoDatabase database = mongoClient.getDatabase(USERS_DB);
-        MongoCollection<Document> collection = database.getCollection(USERS_CONVERSIONS_COLLECTION);
+        MongoCollection<Document> collection = database.getCollection(USERS_COLLECTION);
 
         UpdateOptions updateOptions = new UpdateOptions();
         updateOptions.upsert(true);
@@ -46,7 +46,7 @@ public class RetryLastInfoRepository {
 
     public CurrencyHolder retrieve(Long chatId) {
         MongoDatabase database = mongoClient.getDatabase(USERS_DB);
-        MongoCollection<Document> chatInfoCollection = database.getCollection(USERS_CONVERSIONS_COLLECTION);
+        MongoCollection<Document> chatInfoCollection = database.getCollection(USERS_COLLECTION);
 
         Bson searchFilter = Filters.eq(ID_FIELD, chatId);
 

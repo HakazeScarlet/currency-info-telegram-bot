@@ -7,6 +7,7 @@ import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.MessagesHolder;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.KeyboardBuilder;
+import com.github.hakazescarlet.currencyinfotelegrambot.util.CurrencyUtil;
 import net.fellbaum.jemoji.Emojis;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -19,13 +20,14 @@ import java.util.function.Consumer;
 @Component
 public class ConvertButtonAction implements ButtonAction<SendMessage> {
 
-    private static final String SEPARATOR = "\s";
-
     private final CurrencyConverter currencyConverter;
     private final RetryLastInfoRepository retryLastInfoRepository;
     private final KeyboardBuilder keyboardBuilder;
 
-    public ConvertButtonAction(CurrencyConverter currencyConverter, RetryLastInfoRepository retryLastInfoRepository, KeyboardBuilder keyboardBuilder) {
+    public ConvertButtonAction(
+        CurrencyConverter currencyConverter,
+        RetryLastInfoRepository retryLastInfoRepository,
+        KeyboardBuilder keyboardBuilder) {
         this.currencyConverter = currencyConverter;
         this.retryLastInfoRepository = retryLastInfoRepository;
         this.keyboardBuilder = keyboardBuilder;
@@ -63,7 +65,7 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
 
         // TODO: есть ли смысл в этой проверке (во второй ее части) если есть проверка в методе isApplicable() выше
         if (chatState != null && ButtonTitle.CONVERT.getTitle().equals(chatState.getAction())) {
-            String[] currencies = message.getText().split(SEPARATOR);
+            String[] currencies = message.getText().split(CurrencyUtil.SEPARATOR);
 
             chatState.setCurrent(currencies[0].toUpperCase());
             chatState.setTarget(currencies[1].toUpperCase());
@@ -76,10 +78,10 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
 
             SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId)
-                .text(amount + SEPARATOR
-                    + current + SEPARATOR
-                    + Emojis.RIGHT_ARROW.getUnicode() + SEPARATOR
-                    + converted + SEPARATOR + target)
+                .text(amount + CurrencyUtil.SEPARATOR
+                    + current + CurrencyUtil.SEPARATOR
+                    + Emojis.RIGHT_ARROW.getUnicode() + CurrencyUtil.SEPARATOR
+                    + converted + CurrencyUtil.SEPARATOR + target)
                 .build();
 
             botApiMethod.accept(keyboardBuilder.createInnerFavouriteButton(sendMessage));
