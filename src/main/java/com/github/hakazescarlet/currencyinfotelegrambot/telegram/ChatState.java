@@ -5,10 +5,7 @@ public class ChatState {
     private Long chatId;
     private String action;
 
-    // TODO: extract to separate object named ConversionInfo
-    private String current;
-    private String target;
-    private Double amount;
+    private ConversionInfo conversionInfo;
 
     public Long getChatId() {
         return chatId;
@@ -26,27 +23,11 @@ public class ChatState {
         this.action = action;
     }
 
-    public String getCurrent() {
-        return current;
+    public ConversionInfo getConversionInfo() {
+        return conversionInfo;
     }
 
-    public void setCurrent(String current) {
-        this.current = current;
-    }
-
-    public String getTarget() {
-        return target;
-    }
-
-    public void setTarget(String target) {
-        this.target = target;
-    }
-
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
+    public void setConversionInfo(ConversionInfo conversionInfo) {
+        this.conversionInfo = conversionInfo;
     }
 }

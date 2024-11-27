@@ -1,13 +1,14 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.reply_keyboard;
 
 import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.ChatInfo;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.PairHolder;
 import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.RetryLastInfoRepository;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
+import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ConversionInfo;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.MessagesHolder;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.KeyboardBuilder;
-import com.github.hakazescarlet.currencyinfotelegrambot.util.CurrencyUtil;
 import net.fellbaum.jemoji.Emojis;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -19,6 +20,8 @@ import java.util.function.Consumer;
 
 @Component
 public class ConvertButtonAction implements ButtonAction<SendMessage> {
+
+    private static final String SEPARATOR = "\s";
 
     private final CurrencyConverter currencyConverter;
     private final RetryLastInfoRepository retryLastInfoRepository;
@@ -65,23 +68,26 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
 
         // TODO: есть ли смысл в этой проверке (во второй ее части) если есть проверка в методе isApplicable() выше
         if (chatState != null && ButtonTitle.CONVERT.getTitle().equals(chatState.getAction())) {
-            String[] currencies = message.getText().split(CurrencyUtil.SEPARATOR);
+            String[] currencies = message.getText().split(SEPARATOR);
 
-            chatState.setCurrent(currencies[0].toUpperCase());
-            chatState.setTarget(currencies[1].toUpperCase());
-            chatState.setAmount(Math.abs(Double.parseDouble(currencies[2])));
+            String current = currencies[0].toUpperCase();
+            String target = currencies[1].toUpperCase();
+            double amount = Math.abs(Double.parseDouble(currencies[2]));
 
-            String current = chatState.getCurrent();
-            String target = chatState.getTarget();
-            Double amount = chatState.getAmount();
+            ConversionInfo conversionInfo = new ConversionInfo();
+            conversionInfo.setPairHolder(new PairHolder(current, target));
+            conversionInfo.setAmount(amount);
+
+            chatState.setConversionInfo(conversionInfo);
+
             BigDecimal converted = currencyConverter.convert(current, target, BigDecimal.valueOf(amount));
 
             SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId)
-                .text(amount + CurrencyUtil.SEPARATOR
-                    + current + CurrencyUtil.SEPARATOR
-                    + Emojis.RIGHT_ARROW.getUnicode() + CurrencyUtil.SEPARATOR
-                    + converted + CurrencyUtil.SEPARATOR + target)
+                .text(amount + SEPARATOR
+                    + current + SEPARATOR
+                    + Emojis.RIGHT_ARROW.getUnicode() + SEPARATOR
+                    + converted + SEPARATOR + target)
                 .build();
 
             botApiMethod.accept(keyboardBuilder.createInnerFavouriteButton(sendMessage));
@@ -91,6 +97,8 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
     }
 
     private void saveChatInfo(ChatState chatState) {
-        retryLastInfoRepository.save(new ChatInfo(chatState.getChatId(), chatState.getCurrent(), chatState.getTarget()));
+        PairHolder pairHolder = chatState.getConversionInfo().getPairHolder();
+        retryLastInfoRepository.save(new ChatInfo(chatState.getChatId(), pairHolder.getCurrent(), pairHolder.getTarget())
+        );
     }
 }

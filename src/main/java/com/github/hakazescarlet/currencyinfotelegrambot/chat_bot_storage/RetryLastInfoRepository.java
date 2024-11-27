@@ -44,7 +44,7 @@ public class RetryLastInfoRepository {
         collection.updateOne(filter, update, updateOptions);
     }
 
-    public CurrencyHolder retrieve(Long chatId) {
+    public PairHolder retrieve(Long chatId) {
         MongoDatabase database = mongoClient.getDatabase(USERS_DB);
         MongoCollection<Document> chatInfoCollection = database.getCollection(USERS_COLLECTION);
 
@@ -59,7 +59,7 @@ public class RetryLastInfoRepository {
             return null;
         }
 
-        return new CurrencyHolder(
+        return new PairHolder(
             (String) document.get(CURRENT_FIELD),
             (String) document.get(TARGET_FIELD)
         );

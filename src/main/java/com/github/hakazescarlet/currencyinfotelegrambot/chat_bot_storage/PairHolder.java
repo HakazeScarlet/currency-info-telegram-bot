@@ -1,11 +1,11 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage;
 
-public class CurrencyHolder {   //TODO: rename
+public class PairHolder {
 
     private final String current;
     private final String target;
 
-    public CurrencyHolder(String current, String target) {
+    public PairHolder(String current, String target) {
         this.current = current;
         this.target = target;
     }

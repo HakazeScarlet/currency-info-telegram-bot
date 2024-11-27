@@ -1,10 +1,11 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.reply_keyboard;
 
-import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.CurrencyHolder;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.PairHolder;
 import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.RetryLastInfoRepository;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
+import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ConversionInfo;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.MessagesHolder;
 import net.fellbaum.jemoji.Emojis;
 import org.springframework.stereotype.Component;
@@ -42,14 +43,16 @@ public class RetryLastButtonAction implements ButtonAction<SendMessage> {
         Long chatId = message.getChatId();
 
         if (!chatStates.containsKey(chatId)) {
-            CurrencyHolder currencyHolder = retryLastInfoRepository.retrieve(chatId);
+            PairHolder pairHolder = retryLastInfoRepository.retrieve(chatId);
 
-            if (currencyHolder != null) {
+            if (pairHolder != null) {
                 ChatState chatState = new ChatState();
+
                 chatState.setAction(ButtonTitle.RETRY_LAST.getTitle());
                 chatState.setChatId(chatId);
-                chatState.setCurrent(currencyHolder.getCurrent());
-                chatState.setTarget(currencyHolder.getTarget());
+                ConversionInfo conversionInfo = new ConversionInfo();
+                conversionInfo.setPairHolder(pairHolder);
+                chatState.setConversionInfo(conversionInfo);
 
                 chatStates.put(chatId, chatState);
 
@@ -57,7 +60,7 @@ public class RetryLastButtonAction implements ButtonAction<SendMessage> {
                     .chatId(chatId)
                     .text(String.format(
                         "%s %s %s %s",
-                        "Amount of", currencyHolder.getCurrent(), "for conversion to", currencyHolder.getTarget()))
+                        "Amount of", pairHolder.getCurrent(), "for conversion to", pairHolder.getTarget()))
                     .build();
 
                 botApiMethod.accept(sendMessage);
@@ -75,8 +78,9 @@ public class RetryLastButtonAction implements ButtonAction<SendMessage> {
             Double amount = Math.abs(Double.parseDouble(message.getText()));
 
             ChatState chatState = chatStates.get(chatId);
-            String current = chatState.getCurrent();
-            String target = chatState.getTarget();
+            PairHolder pairHolder = chatState.getConversionInfo().getPairHolder();
+            String current = pairHolder.getCurrent();
+            String target = pairHolder.getTarget();
             BigDecimal converted = currencyConverter.convert(current, target, BigDecimal.valueOf(amount));
 
             SendMessage sendMessage = new SendMessage();
