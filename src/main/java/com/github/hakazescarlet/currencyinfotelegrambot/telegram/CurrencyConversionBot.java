@@ -1,11 +1,7 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram;
 
-import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.ChatInfo;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.inline_keyboard.AddToFavouriteButtonAction;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.reply_keyboard.ButtonAction;
-import com.github.hakazescarlet.currencyinfotelegrambot.util.CurrencyUtil;
-import com.github.hakazescarlet.currencyinfotelegrambot.util.PairHolder;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -37,18 +33,17 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
     }
 
     // TODO: add validation
-    @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasCallbackQuery()) {
             Message message = (Message) update.getCallbackQuery().getMessage();
 
-            PairHolder currencyPair = CurrencyUtil.parsePair(message.getText());
+//            PairHolder currencyPair = ConversionMessagesBuilder.parsePair(message.getText());
 
 //            String current = favoriteCurrencies[1].toUpperCase();
 //            String target = favoriteCurrencies[4].toUpperCase();
 
-            addToFavouriteButtonAction.saveToDb(new ChatInfo(message.getChatId(), currencyPair.current(), currencyPair.target()));
+//            addToFavouriteButtonAction.saveToDb(new ChatInfo(message.getChatId(), currencyPair.current(), currencyPair.target()));
         } else {
             Message message = update.getMessage();
 
