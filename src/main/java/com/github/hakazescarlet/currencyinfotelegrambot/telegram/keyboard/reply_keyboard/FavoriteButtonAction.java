@@ -15,7 +15,10 @@ public class FavoriteButtonAction implements ButtonAction<SendMessage> {
     private final FavoriteInfoRepository favoriteInfoRepository;
     private final CurrencyConverter currencyConverter;
 
-    public FavoriteButtonAction(FavoriteInfoRepository favoriteInfoRepository, CurrencyConverter currencyConverter) {
+    public FavoriteButtonAction(
+        FavoriteInfoRepository favoriteInfoRepository,
+        CurrencyConverter currencyConverter
+    ) {
         this.favoriteInfoRepository = favoriteInfoRepository;
         this.currencyConverter = currencyConverter;
     }

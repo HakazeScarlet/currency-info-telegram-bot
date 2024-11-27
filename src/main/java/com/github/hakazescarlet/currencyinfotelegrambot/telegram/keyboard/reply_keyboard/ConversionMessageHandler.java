@@ -34,13 +34,6 @@ public class ConversionMessageHandler {
 
     public PairHolder parsePair(String str) {
         String[] splittedMessage = str.split(SEPARATOR);
-
-        for (String messagePart : splittedMessage) {
-            if (CODES.contains(messagePart.toUpperCase())) {
-                // TODO: write to data structure
-            }
-        }
-
-        return null;
+        return new PairHolder(splittedMessage[1], splittedMessage[4]);
     }
 }

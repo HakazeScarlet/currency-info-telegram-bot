@@ -1,7 +1,10 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram;
 
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.ChatInfo;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.PairHolder;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.inline_keyboard.AddToFavouriteButtonAction;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.reply_keyboard.ButtonAction;
+import com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.reply_keyboard.ConversionMessageHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -21,15 +24,17 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
     private final Map<Long, ChatState> chatStates = new HashMap<>();
     private final List<ButtonAction<?>> buttonActions;
     private final AddToFavouriteButtonAction addToFavouriteButtonAction;
+    private final ConversionMessageHandler conversionMessageHandler;
 
     public CurrencyConversionBot(
         @Value("${telegram.bot.token}") String botToken,
         List<ButtonAction<?>> buttonActions,
-        AddToFavouriteButtonAction addToFavouriteButtonAction
+        AddToFavouriteButtonAction addToFavouriteButtonAction, ConversionMessageHandler conversionMessageHandler
     ) {
         super(botToken);
         this.buttonActions = buttonActions;
         this.addToFavouriteButtonAction = addToFavouriteButtonAction;
+        this.conversionMessageHandler = conversionMessageHandler;
     }
 
     // TODO: add validation
@@ -38,12 +43,9 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
         if (update.hasCallbackQuery()) {
             Message message = (Message) update.getCallbackQuery().getMessage();
 
-//            PairHolder currencyPair = ConversionMessagesBuilder.parsePair(message.getText());
+            PairHolder currencyPair = conversionMessageHandler.parsePair(message.getText());
 
-//            String current = favoriteCurrencies[1].toUpperCase();
-//            String target = favoriteCurrencies[4].toUpperCase();
-
-//            addToFavouriteButtonAction.saveToDb(new ChatInfo(message.getChatId(), currencyPair.current(), currencyPair.target()));
+            addToFavouriteButtonAction.saveToDb(new ChatInfo(message.getChatId(), currencyPair.getCurrent(), currencyPair.getTarget()));
         } else {
             Message message = update.getMessage();
 
