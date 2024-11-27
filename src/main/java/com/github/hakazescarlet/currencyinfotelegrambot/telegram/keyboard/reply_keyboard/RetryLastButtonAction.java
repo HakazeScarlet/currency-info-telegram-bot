@@ -7,7 +7,6 @@ import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ConversionInfo;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.MessagesHolder;
-import net.fellbaum.jemoji.Emojis;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -19,14 +18,17 @@ import java.util.function.Consumer;
 @Component
 public class RetryLastButtonAction implements ButtonAction<SendMessage> {
 
-    private static final String SEPARATOR = "\s";
-
     private final RetryLastInfoRepository retryLastInfoRepository;
     private final CurrencyConverter currencyConverter;
+    private final ConversionMessageHandler conversionMessageHandler;
 
-    public RetryLastButtonAction(RetryLastInfoRepository retryLastInfoRepository, CurrencyConverter currencyConverter) {
+    public RetryLastButtonAction(
+        RetryLastInfoRepository retryLastInfoRepository,
+        CurrencyConverter currencyConverter,
+        ConversionMessageHandler conversionMessageHandler) {
         this.retryLastInfoRepository = retryLastInfoRepository;
         this.currencyConverter = currencyConverter;
+        this.conversionMessageHandler = conversionMessageHandler;
     }
 
     @Override
@@ -77,21 +79,20 @@ public class RetryLastButtonAction implements ButtonAction<SendMessage> {
         } else if (chatStates.containsKey(chatId) && chatStates.get(chatId).getAction().equals(ButtonTitle.RETRY_LAST.getTitle())) {
             Double amount = Math.abs(Double.parseDouble(message.getText()));
 
+
             ChatState chatState = chatStates.get(chatId);
             PairHolder pairHolder = chatState.getConversionInfo().getPairHolder();
             String current = pairHolder.getCurrent();
             String target = pairHolder.getTarget();
             BigDecimal converted = currencyConverter.convert(current, target, BigDecimal.valueOf(amount));
 
+            ConversionInfo conversionInfo = new ConversionInfo();
+            conversionInfo.setPairHolder(new PairHolder(current, target));
+            conversionInfo.setAmount(amount);
+
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(chatId);
-            sendMessage.setText(
-                amount + SEPARATOR
-                + current + SEPARATOR
-                + Emojis.RIGHT_ARROW.getUnicode() + SEPARATOR
-                + target + SEPARATOR
-                + converted
-            );
+            sendMessage.setText(conversionMessageHandler.buildMessage(conversionInfo, converted));
 
             botApiMethod.accept(sendMessage);
             chatStates.remove(chatId);

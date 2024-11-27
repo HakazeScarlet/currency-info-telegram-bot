@@ -9,7 +9,6 @@ import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ConversionInfo;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.MessagesHolder;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.KeyboardBuilder;
-import net.fellbaum.jemoji.Emojis;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -26,14 +25,17 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
     private final CurrencyConverter currencyConverter;
     private final RetryLastInfoRepository retryLastInfoRepository;
     private final KeyboardBuilder keyboardBuilder;
+    private final ConversionMessageHandler conversionMessageHandler;
 
     public ConvertButtonAction(
         CurrencyConverter currencyConverter,
         RetryLastInfoRepository retryLastInfoRepository,
-        KeyboardBuilder keyboardBuilder) {
+        KeyboardBuilder keyboardBuilder,
+        ConversionMessageHandler conversionMessageHandler) {
         this.currencyConverter = currencyConverter;
         this.retryLastInfoRepository = retryLastInfoRepository;
         this.keyboardBuilder = keyboardBuilder;
+        this.conversionMessageHandler = conversionMessageHandler;
     }
 
     @Override
@@ -84,10 +86,7 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
 
             SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId)
-                .text(amount + SEPARATOR
-                    + current + SEPARATOR
-                    + Emojis.RIGHT_ARROW.getUnicode() + SEPARATOR
-                    + converted + SEPARATOR + target)
+                .text(conversionMessageHandler.buildMessage(conversionInfo, converted))
                 .build();
 
             botApiMethod.accept(keyboardBuilder.createInnerFavouriteButton(sendMessage));
