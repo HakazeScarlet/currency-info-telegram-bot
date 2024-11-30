@@ -1,5 +1,6 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion;
 
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.PairHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,10 +19,9 @@ public class CurrencyController {
 
     @GetMapping("/convert")
     public ResponseEntity<BigDecimal> convert(
-        @RequestParam String current,
-        @RequestParam String target,
+        @RequestParam PairHolder pairHolder,
         @RequestParam Double amount
     ) {
-        return ResponseEntity.ok(currencyConverter.convert(current, target, BigDecimal.valueOf(amount)));
+        return ResponseEntity.ok(currencyConverter.convert(pairHolder, BigDecimal.valueOf(amount)));
     }
 }

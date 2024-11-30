@@ -3,24 +3,18 @@ package com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage;
 public class ChatInfo {
 
     private final Long id;
-    private final String current;
-    private final String target;
+    private final PairHolder pairHolder;
 
-    public ChatInfo(Long id, String current, String target) {
+    public ChatInfo(Long id, PairHolder pairHolder) {
         this.id = id;
-        this.current = current;
-        this.target = target;
+        this.pairHolder = pairHolder;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getCurrent() {
-        return current;
-    }
-
-    public String getTarget() {
-        return target;
+    public PairHolder getPairHolder() {
+        return pairHolder;
     }
 }

@@ -1,5 +1,6 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion;
 
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.PairHolder;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api.BeaconCurrencyApiProvider;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api.BeaconExchangeRatesHolder;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api.ConversionRatesApiProvider;
@@ -23,15 +24,15 @@ public class CurrencyConverter {
         this.beaconCurrencyApiProvider = beaconCurrencyApiProvider;
     }
 
-    public BigDecimal convert(String current, String target, BigDecimal amount) {
+    public BigDecimal convert(PairHolder pairHolder, BigDecimal amount) {
         // TODO: handle case when one of three parameters will be null (do it after telegram logic writing)
 //        ConversionRatesHolder holder = currencyConverterApiProvider.getExchangeRate(current);
 //        Map<String, Double> conversionRates = holder.getConversionRates();
 //        return BigDecimal.valueOf(conversionRates.get(target)).multiply(amount);
 
-        BeaconExchangeRatesHolder beaconExchangeRatesHolder = beaconCurrencyApiProvider.getRates(current);
+        BeaconExchangeRatesHolder beaconExchangeRatesHolder = beaconCurrencyApiProvider.getRates(pairHolder.getCurrent());
         Map<String, Double> conversionRates = beaconExchangeRatesHolder.getRates();
-        Double currencyRate = conversionRates.get(target);
+        Double currencyRate = conversionRates.get(pairHolder.getTarget());
         return BigDecimal.valueOf(currencyRate).multiply(amount).setScale(2, RoundingMode.HALF_UP);
     }
 }

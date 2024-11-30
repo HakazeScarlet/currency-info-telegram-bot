@@ -24,17 +24,15 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
     private final Map<Long, ChatState> chatStates = new HashMap<>();
     private final List<ButtonAction<?>> buttonActions;
     private final AddToFavouriteButtonAction addToFavouriteButtonAction;
-    private final ConversionMessageHandler conversionMessageHandler;
 
     public CurrencyConversionBot(
         @Value("${telegram.bot.token}") String botToken,
         List<ButtonAction<?>> buttonActions,
-        AddToFavouriteButtonAction addToFavouriteButtonAction, ConversionMessageHandler conversionMessageHandler
+        AddToFavouriteButtonAction addToFavouriteButtonAction
     ) {
         super(botToken);
         this.buttonActions = buttonActions;
         this.addToFavouriteButtonAction = addToFavouriteButtonAction;
-        this.conversionMessageHandler = conversionMessageHandler;
     }
 
     // TODO: add validation
@@ -43,9 +41,9 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
         if (update.hasCallbackQuery()) {
             Message message = (Message) update.getCallbackQuery().getMessage();
 
-            PairHolder currencyPair = conversionMessageHandler.parsePair(message.getText());
+            PairHolder pairHolder = ConversionMessageHandler.parsePair(message.getText());
 
-            addToFavouriteButtonAction.saveToDb(new ChatInfo(message.getChatId(), currencyPair.getCurrent(), currencyPair.getTarget()));
+            addToFavouriteButtonAction.saveToDb(new ChatInfo(message.getChatId(), pairHolder));
         } else {
             Message message = update.getMessage();
 
@@ -68,7 +66,6 @@ public class CurrencyConversionBot extends TelegramLongPollingBot {
                     }
                 });
         }
-
     }
 
     @Override

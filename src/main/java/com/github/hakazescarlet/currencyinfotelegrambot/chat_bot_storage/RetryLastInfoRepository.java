@@ -37,8 +37,8 @@ public class RetryLastInfoRepository {
 
         Bson filter = eq(ID_FIELD, chatInfo.getId());
         Bson update = Updates.combine(
-            Updates.set(CURRENT_FIELD, chatInfo.getCurrent()),
-            Updates.set(TARGET_FIELD, chatInfo.getTarget())
+            Updates.set(CURRENT_FIELD, chatInfo.getPairHolder().getCurrent()),
+            Updates.set(TARGET_FIELD, chatInfo.getPairHolder().getTarget())
         );
 
         collection.updateOne(filter, update, updateOptions);

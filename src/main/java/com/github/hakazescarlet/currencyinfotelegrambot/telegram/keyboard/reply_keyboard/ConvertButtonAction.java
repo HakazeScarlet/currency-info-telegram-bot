@@ -20,22 +20,18 @@ import java.util.function.Consumer;
 @Component
 public class ConvertButtonAction implements ButtonAction<SendMessage> {
 
-    private static final String SEPARATOR = "\s";
-
     private final CurrencyConverter currencyConverter;
     private final RetryLastInfoRepository retryLastInfoRepository;
     private final KeyboardBuilder keyboardBuilder;
-    private final ConversionMessageHandler conversionMessageHandler;
 
     public ConvertButtonAction(
         CurrencyConverter currencyConverter,
         RetryLastInfoRepository retryLastInfoRepository,
-        KeyboardBuilder keyboardBuilder,
-        ConversionMessageHandler conversionMessageHandler) {
+        KeyboardBuilder keyboardBuilder
+    ) {
         this.currencyConverter = currencyConverter;
         this.retryLastInfoRepository = retryLastInfoRepository;
         this.keyboardBuilder = keyboardBuilder;
-        this.conversionMessageHandler = conversionMessageHandler;
     }
 
     @Override
@@ -70,34 +66,30 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
 
         // TODO: есть ли смысл в этой проверке (во второй ее части) если есть проверка в методе isApplicable() выше
         if (chatState != null && ButtonTitle.CONVERT.getTitle().equals(chatState.getAction())) {
-            String[] currencies = message.getText().split(SEPARATOR);
-
-            String current = currencies[0].toUpperCase();
-            String target = currencies[1].toUpperCase();
+            String[] currencies = message.getText().split(ConversionMessageHandler.SEPARATOR);
+            PairHolder pairHolder = new PairHolder(currencies[0].toUpperCase(), currencies[1].toUpperCase());
             double amount = Math.abs(Double.parseDouble(currencies[2]));
 
             ConversionInfo conversionInfo = new ConversionInfo();
-            conversionInfo.setPairHolder(new PairHolder(current, target));
+            conversionInfo.setPairHolder(pairHolder);
             conversionInfo.setAmount(amount);
-
             chatState.setConversionInfo(conversionInfo);
 
-            BigDecimal converted = currencyConverter.convert(current, target, BigDecimal.valueOf(amount));
+            BigDecimal converted = currencyConverter.convert(pairHolder, BigDecimal.valueOf(amount));
 
             SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId)
-                .text(conversionMessageHandler.buildMessage(conversionInfo, converted))
+                .text(ConversionMessageHandler.buildMessage(conversionInfo, converted))
                 .build();
 
             botApiMethod.accept(keyboardBuilder.createInnerFavouriteButton(sendMessage));
-            saveChatInfo(chatState);
+            saveRetryLastInfo(chatState);
             chatStates.remove(chatId);
         }
     }
 
-    private void saveChatInfo(ChatState chatState) {
+    private void saveRetryLastInfo(ChatState chatState) {
         PairHolder pairHolder = chatState.getConversionInfo().getPairHolder();
-        retryLastInfoRepository.save(new ChatInfo(chatState.getChatId(), pairHolder.getCurrent(), pairHolder.getTarget())
-        );
+        retryLastInfoRepository.save(new ChatInfo(chatState.getChatId(), pairHolder));
     }
 }

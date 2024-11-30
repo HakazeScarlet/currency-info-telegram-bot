@@ -20,15 +20,13 @@ public class RetryLastButtonAction implements ButtonAction<SendMessage> {
 
     private final RetryLastInfoRepository retryLastInfoRepository;
     private final CurrencyConverter currencyConverter;
-    private final ConversionMessageHandler conversionMessageHandler;
 
     public RetryLastButtonAction(
         RetryLastInfoRepository retryLastInfoRepository,
-        CurrencyConverter currencyConverter,
-        ConversionMessageHandler conversionMessageHandler) {
+        CurrencyConverter currencyConverter
+    ) {
         this.retryLastInfoRepository = retryLastInfoRepository;
         this.currencyConverter = currencyConverter;
-        this.conversionMessageHandler = conversionMessageHandler;
     }
 
     @Override
@@ -66,7 +64,6 @@ public class RetryLastButtonAction implements ButtonAction<SendMessage> {
                     .build();
 
                 botApiMethod.accept(sendMessage);
-                return;
             } else {
                 SendMessage sendMessage = SendMessage.builder()
                     .chatId(chatId)
@@ -74,29 +71,24 @@ public class RetryLastButtonAction implements ButtonAction<SendMessage> {
                     .build();
 
                 botApiMethod.accept(sendMessage);
-                return;
             }
         } else if (chatStates.containsKey(chatId) && chatStates.get(chatId).getAction().equals(ButtonTitle.RETRY_LAST.getTitle())) {
             Double amount = Math.abs(Double.parseDouble(message.getText()));
 
-
             ChatState chatState = chatStates.get(chatId);
             PairHolder pairHolder = chatState.getConversionInfo().getPairHolder();
-            String current = pairHolder.getCurrent();
-            String target = pairHolder.getTarget();
-            BigDecimal converted = currencyConverter.convert(current, target, BigDecimal.valueOf(amount));
+            BigDecimal converted = currencyConverter.convert(pairHolder, BigDecimal.valueOf(amount));
 
             ConversionInfo conversionInfo = new ConversionInfo();
-            conversionInfo.setPairHolder(new PairHolder(current, target));
+            conversionInfo.setPairHolder(pairHolder);
             conversionInfo.setAmount(amount);
 
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(chatId);
-            sendMessage.setText(conversionMessageHandler.buildMessage(conversionInfo, converted));
+            sendMessage.setText(ConversionMessageHandler.buildMessage(conversionInfo, converted));
 
             botApiMethod.accept(sendMessage);
             chatStates.remove(chatId);
-            return;
         }
     }
 }
