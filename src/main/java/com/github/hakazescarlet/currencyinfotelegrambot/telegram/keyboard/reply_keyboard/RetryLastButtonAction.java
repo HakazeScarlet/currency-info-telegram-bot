@@ -1,7 +1,7 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.reply_keyboard;
 
-import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.PairHolder;
 import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.RetryLastInfoRepository;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.entities.PairHolder;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.CurrencyConverter;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ButtonTitle;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;

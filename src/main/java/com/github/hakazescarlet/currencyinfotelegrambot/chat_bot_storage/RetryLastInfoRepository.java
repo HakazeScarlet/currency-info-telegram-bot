@@ -1,12 +1,12 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage;
 
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.entities.PairHolder;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.entities.UserChatInfo;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
-import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.springframework.stereotype.Repository;
 
@@ -18,9 +18,8 @@ public class RetryLastInfoRepository {
 
     private static final String USERS_DB = "users_db";  // TODO: rename
     private static final String USERS_COLLECTION = "users_collection";
-    private static final String ID_FIELD = "id";
-    private static final String CURRENT_FIELD = "current";
-    private static final String TARGET_FIELD = "target";
+    private static final String RETRY_LAST = "retry_last";
+    private static final String USER_ID = "id";
 
     private final MongoClient mongoClient;
 
@@ -29,39 +28,32 @@ public class RetryLastInfoRepository {
     }
 
     public void save(ChatInfo chatInfo) {
-        MongoDatabase database = mongoClient.getDatabase(USERS_DB);
-        MongoCollection<Document> collection = database.getCollection(USERS_COLLECTION);
+        MongoCollection<UserChatInfo> collection = mongoClient.getDatabase(USERS_DB)
+            .getCollection(USERS_COLLECTION, UserChatInfo.class);
 
         UpdateOptions updateOptions = new UpdateOptions();
         updateOptions.upsert(true);
 
-        Bson filter = eq(ID_FIELD, chatInfo.getId());
-        Bson update = Updates.combine(
-            Updates.set(CURRENT_FIELD, chatInfo.getPairHolder().getCurrent()),
-            Updates.set(TARGET_FIELD, chatInfo.getPairHolder().getTarget())
-        );
-
-        collection.updateOne(filter, update, updateOptions);
+        Bson filter = eq(USER_ID, chatInfo.getId());
+        Bson updatable = Updates.set(RETRY_LAST, chatInfo.getPairHolder());
+        collection.updateOne(filter, updatable, updateOptions);
     }
 
     public PairHolder retrieve(Long chatId) {
-        MongoDatabase database = mongoClient.getDatabase(USERS_DB);
-        MongoCollection<Document> chatInfoCollection = database.getCollection(USERS_COLLECTION);
+        MongoCollection<UserChatInfo> collection = mongoClient.getDatabase(USERS_DB)
+            .getCollection(USERS_COLLECTION, UserChatInfo.class);
 
-        Bson searchFilter = Filters.eq(ID_FIELD, chatId);
+        Bson searchFilter = Filters.eq(USER_ID, chatId);
+        Bson fields = fields(include(RETRY_LAST), excludeId());
 
-        Bson fields = fields(include(CURRENT_FIELD, TARGET_FIELD), excludeId());
-        Document document = chatInfoCollection.find(searchFilter)
+        UserChatInfo userChatInfo = collection.find(searchFilter)
             .projection(fields)
             .first();
 
-        if (document == null) {
+        if (userChatInfo == null) {
             return null;
         }
 
-        return new PairHolder(
-            (String) document.get(CURRENT_FIELD),
-            (String) document.get(TARGET_FIELD)
-        );
+        return userChatInfo.getPairHolder();
     }
 }

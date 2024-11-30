@@ -1,6 +1,6 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.telegram;
 
-import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.PairHolder;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.entities.PairHolder;
 
 public class ConversionInfo {
 

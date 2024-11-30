@@ -1,6 +1,6 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion;
 
-import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.PairHolder;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.entities.PairHolder;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api.BeaconCurrencyApiProvider;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api.BeaconExchangeRatesHolder;
 import com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion.currency_api.ConversionRatesApiProvider;

@@ -7,7 +7,8 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoDatabase;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
@@ -20,6 +21,9 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.net.http.HttpClient;
 import java.util.concurrent.TimeUnit;
+
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @Configuration
 @EnableCaching
@@ -56,24 +60,27 @@ public class CurrencyInfoTgBotConfiguration {
         return caffeineCacheManager;
     }
 
+    // TODO: extract to envs
     @Bean
     public MongoClient createMongoClient() {
         try {
-            // TODO: extract to envs
+            CodecRegistry pojoCodecRegistry = fromRegistries(
+                MongoClientSettings.getDefaultCodecRegistry(),
+                fromProviders(PojoCodecProvider.builder().automatic(true).build())
+            );
+
             MongoCredential scramSha1Credential = MongoCredential.createScramSha1Credential("admin", "users_db", "pass".toCharArray());
 
             MongoClientSettings settings = MongoClientSettings.builder()
-                .applyConnectionString(new ConnectionString("mongodb://localhost:27017"))    // TODO: extract to envs
+                .applyConnectionString(new ConnectionString("mongodb://localhost:27017"))
                 .credential(scramSha1Credential)
+                .codecRegistry(pojoCodecRegistry)
                 .build();
-            MongoClient mongoClient = MongoClients.create(settings);
-            // TODO: remove this line after library version changing with mongo
-            MongoDatabase db = mongoClient.getDatabase("users_db");
-            return mongoClient;
+
+            return MongoClients.create(settings);
         } catch (Exception exception) {
             // TODO: handle custom exception
             throw new RuntimeException(exception);
         }
-//        return MongoClients.create("mongodb://admin:pass@localhost:27017");
     }
 }

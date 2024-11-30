@@ -1,6 +1,6 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.currency_conversion;
 
-import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.PairHolder;
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.entities.PairHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

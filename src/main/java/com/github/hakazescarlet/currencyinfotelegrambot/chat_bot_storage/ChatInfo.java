@@ -1,5 +1,7 @@
 package com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage;
 
+import com.github.hakazescarlet.currencyinfotelegrambot.chat_bot_storage.entities.PairHolder;
+
 public class ChatInfo {
 
     private final Long id;
