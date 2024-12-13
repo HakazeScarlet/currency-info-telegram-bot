@@ -73,11 +73,12 @@ public class RetryLastButtonAction implements ButtonAction<SendMessage> {
                 botApiMethod.accept(sendMessage);
             }
         } else if (chatStates.containsKey(chatId) && chatStates.get(chatId).getAction().equals(ButtonTitle.RETRY_LAST.getTitle())) {
-            Double amount = Math.abs(Double.parseDouble(message.getText()));
+            // TODO: validate message.getText
+            Double amount = Double.parseDouble(message.getText());
 
             ChatState chatState = chatStates.get(chatId);
             PairHolder pairHolder = chatState.getConversionInfo().getPairHolder();
-            BigDecimal converted = currencyConverter.convert(pairHolder, BigDecimal.valueOf(amount));
+            BigDecimal converted = currencyConverter.convert(pairHolder, amount);
 
             ConversionInfo conversionInfo = new ConversionInfo();
             conversionInfo.setPairHolder(pairHolder);

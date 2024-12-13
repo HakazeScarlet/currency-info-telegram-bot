@@ -22,6 +22,6 @@ public class CurrencyController {
         @RequestParam PairHolder pairHolder,
         @RequestParam Double amount
     ) {
-        return ResponseEntity.ok(currencyConverter.convert(pairHolder, BigDecimal.valueOf(amount)));
+        return ResponseEntity.ok(currencyConverter.convert(pairHolder, amount));
     }
 }

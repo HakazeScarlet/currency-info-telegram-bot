@@ -16,8 +16,8 @@ class ConversionMessageHandlerTest {
         conversionInfo.setPairHolder(new PairHolder("USD", "EUR"));
         String message = ConversionMessageHandler.buildMessage(conversionInfo, new BigDecimal(1000));
 
-        PairHolder actual = ConversionMessageHandler.parsePair(message);
         PairHolder expected = new PairHolder("USD", "EUR");
+        PairHolder actual = ConversionMessageHandler.parsePair(message);
 
         assertEquals(expected, actual);
     }

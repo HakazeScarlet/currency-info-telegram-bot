@@ -68,23 +68,43 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
         if (chatState != null && ButtonTitle.CONVERT.getTitle().equals(chatState.getAction())) {
             String[] currencies = message.getText().split(ConversionMessageHandler.SEPARATOR);
             PairHolder pairHolder = new PairHolder(currencies[0].toUpperCase(), currencies[1].toUpperCase());
-            double amount = Math.abs(Double.parseDouble(currencies[2]));
+        // TODO: добавить валидацию для currencies[2]
+            Double amount = Double.parseDouble(currencies[2]);
 
             ConversionInfo conversionInfo = new ConversionInfo();
             conversionInfo.setPairHolder(pairHolder);
             conversionInfo.setAmount(amount);
             chatState.setConversionInfo(conversionInfo);
+            try {
+                BigDecimal converted = currencyConverter.convert(pairHolder, amount);
 
-            BigDecimal converted = currencyConverter.convert(pairHolder, BigDecimal.valueOf(amount));
+                SendMessage sendMessage = SendMessage.builder()
+                    .chatId(chatId)
+                    .text(ConversionMessageHandler.buildMessage(conversionInfo, converted))
+                    .build();
 
-            SendMessage sendMessage = SendMessage.builder()
-                .chatId(chatId)
-                .text(ConversionMessageHandler.buildMessage(conversionInfo, converted))
-                .build();
+                botApiMethod.accept(keyboardBuilder.createInnerFavouriteButton(sendMessage));
+                saveRetryLastInfo(chatState);
+                chatStates.remove(chatId);
+            } catch (CurrencyConverter.CurrencyCodeException e) {
+                SendMessage sendMessage = keyboardBuilder.createReplyKeyboard(message.getChatId());
+                sendMessage.setText("Can't convert "
+                        + pairHolder.getCurrent() + " & " + pairHolder.getTarget()
+                        + ". Check your currencies and try again. Example: "
+                        + MessagesHolder.CONVERT_MESSAGE_EXAMPLE
+                    );
 
-            botApiMethod.accept(keyboardBuilder.createInnerFavouriteButton(sendMessage));
-            saveRetryLastInfo(chatState);
-            chatStates.remove(chatId);
+                chatStates.remove(chatId);
+                botApiMethod.accept(sendMessage);
+            } catch (CurrencyConverter.NoPairCurrencyException e) {
+                SendMessage sendMessage = keyboardBuilder.createReplyKeyboard(message.getChatId());
+                sendMessage.setText("Incorrect message format. Example: "
+                        + MessagesHolder.CONVERT_MESSAGE_EXAMPLE
+                    );
+
+                chatStates.remove(chatId);
+                botApiMethod.accept(sendMessage);
+            }
         }
     }
 
