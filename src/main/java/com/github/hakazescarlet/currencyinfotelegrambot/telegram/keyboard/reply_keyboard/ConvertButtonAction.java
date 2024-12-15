@@ -9,6 +9,7 @@ import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ChatState;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.ConversionInfo;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.MessagesHolder;
 import com.github.hakazescarlet.currencyinfotelegrambot.telegram.keyboard.KeyboardBuilder;
+import net.fellbaum.jemoji.Emojis;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -66,15 +67,24 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
 
         // TODO: есть ли смысл в этой проверке (во второй ее части) если есть проверка в методе isApplicable() выше
         if (chatState != null && ButtonTitle.CONVERT.getTitle().equals(chatState.getAction())) {
-            String[] currencies = message.getText().split(ConversionMessageHandler.SEPARATOR);
-            PairHolder pairHolder = new PairHolder(currencies[0].toUpperCase(), currencies[1].toUpperCase());
-        // TODO: добавить валидацию для currencies[2]
-            Double amount = Double.parseDouble(currencies[2]);
+            try {
+                String[] currencies = message.getText().split(ConversionMessageHandler.SEPARATOR);
+                String[] validCurrencies = ConvertButtonAction.validateConvertMessage(currencies);
+                PairHolder pairHolder = new PairHolder(validCurrencies[0].toUpperCase(), validCurrencies[1].toUpperCase());
+                // TODO: добавить валидацию для currencies[2]
+                Double amount = Double.parseDouble(validCurrencies[2]);
 
-            ConversionInfo conversionInfo = new ConversionInfo();
-            conversionInfo.setPairHolder(pairHolder);
-            conversionInfo.setAmount(amount);
-            chatState.setConversionInfo(conversionInfo);
+                ConversionInfo conversionInfo = new ConversionInfo();
+                conversionInfo.setPairHolder(pairHolder);
+                conversionInfo.setAmount(amount);
+                chatState.setConversionInfo(conversionInfo);
+            } catch (ConvertMessageValidationException e) {
+                SendMessage sendMessage = keyboardBuilder.createReplyKeyboard(message.getChatId());
+                sendMessage.setText("Check your currencies and try again. Example "
+                    + Emojis.RIGHT_ARROW.getUnicode()
+                    + " USD EUR 1000"
+                );
+            }
             try {
                 BigDecimal converted = currencyConverter.convert(pairHolder, amount);
 
@@ -89,18 +99,20 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
             } catch (CurrencyConverter.CurrencyCodeException e) {
                 SendMessage sendMessage = keyboardBuilder.createReplyKeyboard(message.getChatId());
                 sendMessage.setText("Can't convert "
-                        + pairHolder.getCurrent() + " & " + pairHolder.getTarget()
-                        + ". Check your currencies and try again. Example: "
-                        + MessagesHolder.CONVERT_MESSAGE_EXAMPLE
-                    );
+                    + pairHolder.getCurrent() + " & " + pairHolder.getTarget()
+                    + ". Check your currencies and try again. Example "
+                    + Emojis.RIGHT_ARROW.getUnicode()
+                    + " USD EUR 1000"
+                );
 
                 chatStates.remove(chatId);
                 botApiMethod.accept(sendMessage);
             } catch (CurrencyConverter.NoPairCurrencyException e) {
                 SendMessage sendMessage = keyboardBuilder.createReplyKeyboard(message.getChatId());
-                sendMessage.setText("Incorrect message format. Example: "
-                        + MessagesHolder.CONVERT_MESSAGE_EXAMPLE
-                    );
+                sendMessage.setText("Incorrect message format. Example "
+                    + Emojis.RIGHT_ARROW.getUnicode()
+                    + " USD EUR 1000"
+                );
 
                 chatStates.remove(chatId);
                 botApiMethod.accept(sendMessage);
@@ -111,5 +123,20 @@ public class ConvertButtonAction implements ButtonAction<SendMessage> {
     private void saveRetryLastInfo(ChatState chatState) {
         PairHolder pairHolder = chatState.getConversionInfo().getPairHolder();
         retryLastInfoRepository.save(new ChatInfo(chatState.getChatId(), pairHolder));
+    }
+
+    private static String[] validateConvertMessage(String[] currencies) {
+        if (currencies.length != 3) {
+            return currencies;
+        }
+        throw new ConvertMessageValidationException("Uncorrected convert message");
+    }
+
+    public static final class ConvertMessageValidationException extends RuntimeException {
+
+        public ConvertMessageValidationException(String message) {
+            super(message);
+        }
+
     }
 }

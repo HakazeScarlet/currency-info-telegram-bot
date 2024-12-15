@@ -33,20 +33,6 @@ public class CurrencyConverter {
             .setScale(2, RoundingMode.HALF_UP);
     }
 
-    public static final class NoPairCurrencyException extends RuntimeException {
-
-        public NoPairCurrencyException(String message) {
-            super(message);
-        }
-    }
-
-    public static final class CurrencyCodeException extends RuntimeException {
-
-        public CurrencyCodeException(String message) {
-            super(message);
-        }
-    }
-
     private static PairHolder validatePairHolder(PairHolder pairHolder) {
         String current = pairHolder.getCurrent();
         String target = pairHolder.getTarget();
@@ -58,5 +44,18 @@ public class CurrencyConverter {
             throw new CurrencyCodeException("Current or target currency code is incorrect");
         }
         throw new NoPairCurrencyException("Current or target currency is null");
+    }
+
+    public static final class NoPairCurrencyException extends RuntimeException {
+
+        public NoPairCurrencyException(String message) {
+            super(message);
+        }
+    }
+    public static final class CurrencyCodeException extends RuntimeException {
+
+        public CurrencyCodeException(String message) {
+            super(message);
+        }
     }
 }
