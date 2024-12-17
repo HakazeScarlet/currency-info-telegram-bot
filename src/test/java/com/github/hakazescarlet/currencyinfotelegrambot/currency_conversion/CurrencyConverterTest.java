@@ -35,11 +35,35 @@ class CurrencyConverterTest {
         assertEquals(BigDecimal.valueOf(95.00).setScale(2, RoundingMode.HALF_UP), actual);
     }
 
+    // TODO сделать тест если карент нулл && оба нулл
     @Test
     void whenNoPairOfCurrencies_throwNoPairCurrencyException() {
         PairHolder pairHolder = new PairHolder("EUR", null);
-        Map<String, Double> rates = new HashMap<>();
-        rates.put("EUR", 1.0);
+
+        CurrencyConverter currencyConverter = new CurrencyConverter(Mockito.mock(BeaconCurrencyApiProvider.class));
+
+        assertThrows(
+            CurrencyConverter.NoPairCurrencyException.class,
+            () -> currencyConverter.convert(pairHolder, 1000.0)
+        );
+    }
+
+    @Test
+    void whenCurrenciesNotValid_throwCurrencyCodeException() {
+        PairHolder pairHolder = new PairHolder("bvsdfg1234", "3412wtWGwwer");
+
+        CurrencyConverter currencyConverter = new CurrencyConverter(Mockito.mock(BeaconCurrencyApiProvider.class));
+
+        assertThrows(
+            CurrencyConverter.CurrencyCodeException.class,
+            () -> currencyConverter.convert(pairHolder, 1000.0)
+        );
+    }
+
+    @Test
+    void whenCurrencyRatesIsNull_throwConversionRatesIsNullException() {
+        PairHolder pairHolder = new PairHolder("EUR", "USD");
+        Map<String, Double> rates = null;
 
         BeaconExchangeRatesHolder beaconExchangeRatesHolder = new BeaconExchangeRatesHolder();
         beaconExchangeRatesHolder.setRates(rates);
@@ -48,29 +72,32 @@ class CurrencyConverterTest {
         BeaconCurrencyApiProvider currencyApiProviderMock = Mockito.mock(BeaconCurrencyApiProvider.class);
         Mockito.when(currencyApiProviderMock.getRates("EUR")).thenReturn(beaconExchangeRatesHolder);
 
+        CurrencyConverter currencyConverter = new CurrencyConverter(currencyApiProviderMock);
+
         assertThrows(
-            CurrencyConverter.NoPairCurrencyException.class,
-            () -> new CurrencyConverter(currencyApiProviderMock).convert(pairHolder, 1000.0));
+            CurrencyConverter.ConversionRatesIsNullException.class,
+            () -> currencyConverter.convert(pairHolder, 10.0)
+        );
     }
 
     @Test
-    void whenCurrenciesNotValid_throwCurrencyCodeException() {
-        PairHolder pairHolder = new PairHolder("bvsdfg1234", "3412wtWGwwer");
+    void whenCurrencyRatesNoConvertCurrent_throwConversionRatesNoCurrencyException() {
+        PairHolder pairHolder = new PairHolder("EUR", "USD");
         Map<String, Double> rates = new HashMap<>();
-        rates.put("bvsdfg1234", 1.0);
+        rates.put("USDT", 0.95);
 
         BeaconExchangeRatesHolder beaconExchangeRatesHolder = new BeaconExchangeRatesHolder();
         beaconExchangeRatesHolder.setRates(rates);
-        beaconExchangeRatesHolder.setBaseCurrency("bvsdfg1234");
+        beaconExchangeRatesHolder.setBaseCurrency("EUR");
 
         BeaconCurrencyApiProvider currencyApiProviderMock = Mockito.mock(BeaconCurrencyApiProvider.class);
-        Mockito.when(currencyApiProviderMock.getRates("bvsdfg1234")).thenReturn(beaconExchangeRatesHolder);
+        Mockito.when(currencyApiProviderMock.getRates("EUR")).thenReturn(beaconExchangeRatesHolder);
 
         CurrencyConverter currencyConverter = new CurrencyConverter(currencyApiProviderMock);
 
         assertThrows(
-            CurrencyConverter.CurrencyCodeException.class,
-            () -> currencyConverter.convert(pairHolder, 1000.0)
-        );
+            CurrencyConverter.ConversionRatesNoCurrencyException.class,
+            () -> currencyConverter.convert(pairHolder, 10.0)
+            );
     }
 }
