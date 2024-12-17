@@ -9,7 +9,7 @@ import java.text.DecimalFormat;
 
 public class ConversionMessageHandler {
 
-    public static final String SEPARATOR = "\s";
+    public static final String SEPARATOR = "\\s";
 
     public static String buildMessage(ConversionInfo conversionInfo, BigDecimal converted) {
         PairHolder pairHolder = conversionInfo.getPairHolder();
